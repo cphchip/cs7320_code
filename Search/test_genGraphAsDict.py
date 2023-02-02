@@ -11,6 +11,7 @@ class Test(TestCase):
 
         graph_dict = build_graph_as_dict(node_list, isDirectedGraph=True)
 
+        print(graph_dict) #debug line
         # test that a key exists for each of the first nodes in node_list tuples (from->to)
         assert ('A' in graph_dict.keys()) == True
         assert ('B' in graph_dict.keys()) == True
@@ -25,8 +26,8 @@ class Test(TestCase):
         assert ('E' in child_list) == True
 
 
-''' Uncomment this test when you have implemented for undirected graphs
-
+#  Uncomment this test when you have implemented for undirected graphs
+'''
     def test_build_UNdirected_graph_as_dict(self):
         node_list = [('A', 'B'), ('B', 'C'), ('C', 'D'), ('C', 'E'), ('A', 'E'), ('B', 'F')]
 
