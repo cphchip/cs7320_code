@@ -27,7 +27,7 @@ class Test(TestCase):
 
 
 #  Uncomment this test when you have implemented for undirected graphs
-'''
+
     def test_build_UNdirected_graph_as_dict(self):
         node_list = [('A', 'B'), ('B', 'C'), ('C', 'D'), ('C', 'E'), ('A', 'E'), ('B', 'F')]
 
@@ -53,4 +53,3 @@ class Test(TestCase):
         # test that we have correct children for 'F'
         child_list = graph_dict['F']
         assert ('B' in child_list) == True
-'''
