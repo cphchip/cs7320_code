@@ -11,9 +11,15 @@
 def build_graph_as_dict (node_list, directed=True):
     # create map - node -> [child, child]
     node_map = {}
+    if directed == True:
+        for i in node_list:
+            node_map.setdefault(i[0],[]).append(i[1])
+    else:
+        for i in node_list:
+            node_map.setdefault(i[0],[]).append(i[1])
+            node_map.setdefault(i[1],[]).append(i[0])
 
-    # add your code from part a -  that maps nodes to connected nodes
-
+    print(f"Here is your adjacency list: \n",node_map) #debug line
     return node_map
 
 def bfs_all_paths(graph, start, goal):
@@ -21,13 +27,16 @@ def bfs_all_paths(graph, start, goal):
 
     while queue:
         (vertex, path) = queue.pop(0)
+        global bfs_count
+        bfs_count += 1
         next_node_list = [x for x in graph[vertex] if x not in set(path)]
         for next in next_node_list:
             if next == goal:
-                yield path + [next]
+                # yield path + [next]
+                print(f"BFS count is ", bfs_count)
+                return path + [next]
             else:
                 queue.append( (next, path + [next]))
-
 
 def dfs_all_paths(graph, start, goal):
     stack = [ (start, [start])]
@@ -35,13 +44,21 @@ def dfs_all_paths(graph, start, goal):
     while stack:
         # note pop()  returns LAST value in list
         (vertex, path) = stack.pop()
+        global dfs_count
+        dfs_count += 1
         next_node_list = [x for x in graph[vertex] if x not in set(path)]
         for next in next_node_list:
             if next == goal:
-                yield path + [next]
+                # yield path + [next]
+                print(f"DFS count is ", dfs_count)
+                return path + [next]
             else:
                 stack.append( (next, path + [next]))
 
+
+# Create global variable counters for dfs and bfs nodes
+bfs_count = 0
+dfs_count = 0
 
 # main - try with larger graph and measure memory/search - complex graph ?
 def main():
@@ -64,8 +81,7 @@ def main():
 
     # display # paths  and the paths
     print (f"BFS all paths. Number paths={len(bfs_path_list)}\nBFS paths: {bfs_path_list}")
-
-
+    print(f"bfs nodes visited ", bfs_count)
     print("\n\nDepth First Search--------------")
 
     # get a list of all the paths to goal using DFS
@@ -75,6 +91,8 @@ def main():
 
     # results for DFS
     print (f"DFS all paths. Number paths={len(dfs_path_list)}\nDFS paths: {dfs_path_list}")
+    print(f"dfs nodes visited ", dfs_count)
+
 
 # run the main function
 main()
