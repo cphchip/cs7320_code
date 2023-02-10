@@ -25,6 +25,8 @@ class Test(TestCase):
         assert ('D' in child_list) == True
         assert ('E' in child_list) == True
 
+        print("directed success")
+
 
 #  Uncomment this test when you have implemented for undirected graphs
 
@@ -53,3 +55,5 @@ class Test(TestCase):
         # test that we have correct children for 'F'
         child_list = graph_dict['F']
         assert ('B' in child_list) == True
+
+        print("Undirected success")
