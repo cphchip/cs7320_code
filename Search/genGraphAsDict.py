@@ -16,7 +16,6 @@ def build_graph_as_dict(node_list, isDirectedGraph):
     return dict
 
 # This portion of the code is for testing only. Delete before submittal.
-'''
 node_list = [('A', 'B'), ('B', 'C'), ('C', 'D'), ('C', 'E'), ('A', 'E'), ('B', 'F')]
 isDirectedGraph = True
 global_dict = build_graph_as_dict(node_list, isDirectedGraph)
@@ -59,4 +58,3 @@ assert ('B' in child_list) == True
 # test that we have correct children for 'F'
 child_list = global_dict['F']
 assert ('B' in child_list) == True
-'''
