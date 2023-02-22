@@ -41,10 +41,27 @@ def get_board_one_line(board):
     return bstr
 
 def evaluate(board):
-    # replace with your code
-    pass
+    for row in board:
+        i = 0
+        j = 0
+        for value in row:
+            # Detect a win
+            if (value[i][j] == value[i][j+1] and 
+                value[i][j+1] == value[i][j+2]):
+            
+                if value[i][j] == 'X':
+                    return 1
+                else:
+                    return -1
+            
+            else: # Detect a draw
+                return 0
+            j += 1
+        i += 1
+    # pass
 
 def is_terminal_node(board):
+            
     # replace with your code
     pass
 

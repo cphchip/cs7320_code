@@ -7,7 +7,84 @@ def evaluate(board):
      we have a winner
     '''
 
-    pass  # replace with your code
+    '''
+    i = 0
+    j = 0
+
+    while i <= 2:
+        while j <= 2:
+            if ((board[i][j] == board[i][j+1] and 
+                board[i][j+1] == board[i][j+2]) or 
+                (board[i][j] == board[i+1][j] and 
+                board[i+1][j] == board[i+2][j])):
+
+                if board[i][j] == 1:
+                    return 1
+                elif board[i][j] == -1:
+                    return -1
+                elif board[i][j] == 0:
+                    return 0
+        j += 1
+    i += 1
+    '''
+    
+    i = 0
+    print(np.sum(board,0)[0]) # sum the first column
+    # FYI Axis 0 in numpy refers to columns
+    # Axis 1 refers to rows
+    
+    while i <= 2:
+        print (np.sum(board,0)[i] == 1)
+        print (np.sum(board,1)[i])
+        if np.sum(board,0)[i] == 3 or np.sum(board,1)[i] == 3:
+            return 1
+        elif np.sum(board,0)[i] == -3 or np.sum(board,1)[i] == -3:
+            return -1
+
+        i += 1
+    return 0
+
+    i = 0
+    j = 0
+
+    while i <= 2: # Detect row win
+
+        if (board[i][j] == board[i][j+1] and 
+            board[i][j+1] == board[i][j+2]): 
+
+            if board[i][j] == 1:
+                return 1
+            elif board[i][j] == -1:
+                return -1
+            elif board[i][j] == 0:
+                return 0
+            
+        i += 1
+
+
+    i = 0
+    j = 0
+
+    while j <= 2: # Detect column win
+        
+        if (board[i][j] == board[i+1][j] and 
+            board[i+1][j] == board[i+2][j]):
+
+            if board[i][j] == 1: 
+                return 1
+            elif board[i][j] == -1:
+                return -1
+            elif board[i][j] == 0:
+                return 0
+                    
+        j += 1
+
+    # Detect diagaonal win
+    if board[0][0] == board [1][1] and board[1][1] == board[2][2]:
+        return board[0][0]
+    elif board[0][2] == board[1][2] and board[1][2] == board[2][0]:
+        return board[0][2]
+
 
 #### TEST CODE ##########
 def run_tests():
