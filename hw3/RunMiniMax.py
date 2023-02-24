@@ -155,7 +155,8 @@ def run_code_tests():
     b2 = np.array([[0, 0, 0], [1, -1, 1], [0, 0, 0]])
     b3 = np.array([[0, 0, 0], [0, 0, 0], [0, 0, 0]])
     b4 = np.array(
-    [[1, 0, 0, 0], [0, 1, 0, -1], [0, -1, 1, 0], [0, 0, 0, -1]])
+        [[1, 0, 0, 0], [0, 1, 0, -1], [0, -1, 1, 0], [0, 0, 0, -1]]
+    )
 
     # Minimax for a board: evaluate the board
     #    expect win for X (1)  < 200 boards explored

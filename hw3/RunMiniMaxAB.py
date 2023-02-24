@@ -179,7 +179,7 @@ def run_code_tests():
     # max_depth = 9  # adjust this for each board
 
     # Making it easier to switch boards:
-    board = b2
+    board = b4
     max_depth = np.count_nonzero(board == 0)
     print(f"Running minimax w/ max depth {max_depth} for:\n")
     print(showBoard(board))
