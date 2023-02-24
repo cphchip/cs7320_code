@@ -46,25 +46,59 @@ def get_board_one_line(board):
 
 
 def evaluate(board):
-    i = 0
-    while i <= board.shape[0] - 1:
-        if (
-            np.sum(board, 0)[i] == board.shape[0]
-            or np.sum(board, 1)[i] == board.shape[0]
-            or np.sum(np.diagonal(board)) == board.shape[0]
-            or np.sum(np.fliplr(board).diagonal()) == board.shape[0]
-        ):
-            return 1
+    if (board.shape[0] in board.sum(axis=0) 
+        or board.shape[0] in board.sum(axis=1)
+        or np.sum(np.diagonal(board)) == board.shape[0] 
+        or np.sum(np.fliplr(board).diagonal()) == board.shape[0]
+    ):
+        return 1
 
-        elif (
-            np.sum(board, 0)[i] == -1 * board.shape[0]
-            or np.sum(board, 1)[i] == -1 * board.shape[0]
-            or np.sum(np.diagonal(board)) == -1 * board.shape[0]
-            or np.sum(np.fliplr(board).diagonal())
-            == -1 * board.shape[0]
-        ):
-            return -1
-        i += 1
+    elif (-1 * board.shape[0] in board.sum(axis=1) 
+        or -1 * board.shape[0] in board.sum(axis=1)
+        or np.sum(np.diagonal(board)) == -1 * board.shape[0]
+        or np.sum(np.fliplr(board).diagonal() == -1 * board.shape[0])    
+    ):
+        return -1
+    else:
+        return 0
+    
+    
+    
+    
+    # i = 0
+    # while i <= board.shape[0] - 1:
+    #     # Check for 'X' winner
+    #     if (
+    #         np.sum(board, 0)[i] == board.shape[0]
+    #         or np.sum(board, 1)[i] == board.shape[0]
+    #         # or np.sum(np.diagonal(board)) == board.shape[0]
+    #         # or np.sum(np.fliplr(board).diagonal()) == board.shape[0]
+    #     ):
+    #         return 1
+
+    #     # Check for 'O' winner
+    #     elif (
+    #         np.sum(board, 0)[i] == -1 * board.shape[0]
+    #         or np.sum(board, 1)[i] == -1 * board.shape[0]
+    #         # or np.sum(np.diagonal(board)) == -1 * board.shape[0]
+    #         # or np.sum(np.fliplr(board).diagonal())
+    #         # == -1 * board.shape[0]
+    #     ):
+    #         return -1
+    #     i += 1
+
+    # Check diagonals for 'X' or 'O' winners
+    if (
+        np.sum(np.diagonal(board)) == board.shape[0] 
+        or np.sum(np.fliplr(board).diagonal()) == board.shape[0]
+    ):
+        return 1
+
+    elif (
+        np.sum(np.diagonal(board)) == -1 * board.shape[0]
+        or np.sum(np.fliplr(board).diagonal() == -1 * board.shape[0])
+    ):
+        return -1
 
     return 0
 
@@ -151,6 +185,7 @@ def run_code_tests():
         [[1, 0, 0, 0], [0, 1, 0, -1], [0, -1, 1, 0], [0, 0, 0, -1]])
 
     """
+    # Minimax for a board: evaluate the board
     b1 = np.array([[1, 0, -1], [1, 0, 0], [-1, 0, 0]])
     b2 = np.array([[0, 0, 0], [1, -1, 1], [0, 0, 0]])
     b3 = np.array([[0, 0, 0], [0, 0, 0], [0, 0, 0]])
@@ -158,15 +193,8 @@ def run_code_tests():
         [[1, 0, 0, 0], [0, 1, 0, -1], [0, -1, 1, 0], [0, 0, 0, -1]]
     )
 
-    # Minimax for a board: evaluate the board
-    #    expect win for X (1)  < 200 boards explored
-    # print(f"\n--------\nStart Board: \n{b3}")
-
-    # set max_depth  to the number of blanks (zeros) in the board
-    # max_depth = 9  # adjust this for each board
-
     # Making it easier to switch boards:
-    board = b4
+    board = b3
     max_depth = np.count_nonzero(board == 0)
     print(f"Running minimax w/ max depth {max_depth} for:\n", board)
 

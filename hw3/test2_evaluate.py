@@ -7,28 +7,60 @@ def evaluate(board):
     If we get a sum equal to size of row,col,diag (plus or minus)
      we have a winner
     """
+    # print(board.shape[0] in board.sum(axis=0))
 
-    i = 0
-    while i <= board.shape[0] - 1:
-        if (
-            np.sum(board, 0)[i] == board.shape[0]
-            or np.sum(board, 1)[i] == board.shape[0]
-            or np.sum(np.diagonal(board)) == board.shape[0]
-            or np.sum(np.fliplr(board).diagonal()) == board.shape[0]
-        ):
-            return 1
+    if (board.shape[0] in board.sum(axis=0) 
+        or board.shape[0] in board.sum(axis=1)
+        or np.sum(np.diagonal(board)) == board.shape[0] 
+        or np.sum(np.fliplr(board).diagonal()) == board.shape[0]
+    ):
+        return 1
 
-        elif (
-            np.sum(board, 0)[i] == -1 * board.shape[0]
-            or np.sum(board, 1)[i] == -1 * board.shape[0]
-            or np.sum(np.diagonal(board)) == -1 * board.shape[0]
-            or np.sum(np.fliplr(board).diagonal())
-            == -1 * board.shape[0]
-        ):
-            return -1
-        i += 1
+    elif (-1 * board.shape[0] in board.sum(axis=1) 
+        or -1 * board.shape[0] in board.sum(axis=1)
+        or np.sum(np.diagonal(board)) == -1 * board.shape[0]
+        or np.sum(np.fliplr(board).diagonal() == -1 * board.shape[0])    
+    ):
+        return -1
+    else:
+        return 0
 
-    return 0
+    # i = 0
+    # while i <= board.shape[0] - 1:
+    #     # Check for 'X' winner
+    #     if (
+    #         np.sum(board, 0)[i] == board.shape[0]
+    #         or np.sum(board, 1)[i] == board.shape[0]
+    #         # or np.sum(np.diagonal(board)) == board.shape[0]
+    #         # or np.sum(np.fliplr(board).diagonal()) == board.shape[0]
+    #     ):
+    #         return 1
+
+    #     # Check for 'O' winner
+    #     elif (
+    #         np.sum(board, 0)[i] == -1 * board.shape[0]
+    #         or np.sum(board, 1)[i] == -1 * board.shape[0]
+    #         # or np.sum(np.diagonal(board)) == -1 * board.shape[0]
+    #         # or np.sum(np.fliplr(board).diagonal())
+    #         # == -1 * board.shape[0]
+    #     ):
+    #         return -1
+    #     i += 1
+
+    # Check diagonals for 'X' or 'O' winners
+    # if (
+    #     np.sum(np.diagonal(board)) == board.shape[0] 
+    #     or np.sum(np.fliplr(board).diagonal()) == board.shape[0]
+    # ):
+    #     return 1
+
+    # elif (
+    #     np.sum(np.diagonal(board)) == -1 * board.shape[0]
+    #     or np.sum(np.fliplr(board).diagonal() == -1 * board.shape[0])
+    # ):
+    #     return -1
+
+    # return 0
 
 
 #### TEST CODE ##########
