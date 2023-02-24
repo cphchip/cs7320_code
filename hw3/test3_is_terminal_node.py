@@ -5,11 +5,40 @@ import numpy as np
 
 
 def evaluate(board):
-    pass
+
+    i = 0
+    while i <= board.shape[0] - 1:
+
+        if (
+            np.sum(board, 0)[i] == board.shape[0]
+            or np.sum(board, 1)[i] == board.shape[0]
+            or np.sum(np.diagonal(board)) == board.shape[0]
+            or np.sum(np.fliplr(board).diagonal()) == board.shape[0]
+        ):
+            return 1
+
+        elif (
+            np.sum(board, 0)[i] == -1 * board.shape[0]
+            or np.sum(board, 1)[i] == -1 * board.shape[0]
+            or np.sum(np.diagonal(board)) == -1 * board.shape[0]
+            or np.sum(np.fliplr(board).diagonal())
+            == -1 * board.shape[0]
+        ):
+            return -1
+        i += 1
+
+    return 0
 
 
 def is_terminal_node(board):
-    pass
+    board_val = evaluate(board)
+
+    if board_val == 1 or board_val == -1:
+        return True
+    elif board_val == 0 and np.argwhere(board == 0).size == 0:
+        return True
+    else:
+        return False
 
 
 #### TEST CODE ##########

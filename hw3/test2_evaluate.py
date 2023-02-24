@@ -7,9 +7,9 @@ def evaluate(board):
     If we get a sum equal to size of row,col,diag (plus or minus)
      we have a winner
     """
+
     i = 0
     while i <= board.shape[0] - 1:
-
         if (
             np.sum(board, 0)[i] == board.shape[0]
             or np.sum(board, 1)[i] == board.shape[0]

@@ -1,5 +1,6 @@
 # test get_child_boards - separate test file
 import numpy as np
+import copy
 
 
 def getChildren(board, char):
@@ -12,15 +13,15 @@ def getChildren(board, char):
         newval = 1
 
     child_list = []
-    zero_values = np.argwhere(board == 0)
-    temp_list = []
+    zero_values = np.argwhere(board == 0)  # Determine indeces of zeros
+    temp_arr = []
 
     for indice in zero_values:
-        temp_list = board.tolist()
-        temp_list[indice[0]][indice[1]] = newval
-        child_list.append(temp_list)
-    return child_list
+        temp_arr = copy.deepcopy(board)
+        temp_arr[indice[0]][indice[1]] = newval
+        child_list.append(temp_arr)
 
+    return child_list
 
 def run_tests():
     b = np.array([[1, 0, -1], [1, 0, 0], [-1, 0, 0]])

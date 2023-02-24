@@ -102,7 +102,7 @@ def get_child_boards(board, char):
     return child_list
 
 
-def minimax(board, depth, maximizingPlayer):
+def minimax(board, depth, alpha, beta, maximizingPlayer):
     """returns the value of the board
     0 (draw) 1 (win for X) -1 (win for O)
     Explores all child boards for this position and returns
@@ -110,17 +110,23 @@ def minimax(board, depth, maximizingPlayer):
     """
     global COUNT
     COUNT += 1
-    # print(board) # Debug line
     if depth == 0 or is_terminal_node(board):
         return evaluate(board)
 
     if maximizingPlayer:  # max player plays X
         maxEva = -math.inf
+        # alpha = -math.inf
+        # beta = math.inf
         child_list = get_child_boards(board, "X")
-        # print(f"Max child lists:\n",child_list, "\n")
+
         for child_board in child_list:
-            eva = minimax(child_board, depth - 1, False)
+            eva = minimax(child_board, depth - 1, alpha, beta, False)
             maxEva = max(maxEva, eva)
+            alpha = max(alpha, maxEva)
+
+            if beta <= alpha:
+                break
+
         return maxEva
 
     else:  # minimizing player
@@ -128,8 +134,15 @@ def minimax(board, depth, maximizingPlayer):
         child_list = get_child_boards(board, "O")
         # print(f"Min child lists:\n",child_list, "\n")
         for child_board in child_list:
-            eva = minimax(child_board, depth - 1, True)
+            eva = minimax(child_board, depth - 1, alpha, beta, True)
             minEva = min(minEva, eva)
+            beta = min(
+                beta, minEva
+            )  # note the article says minEva should be eva, I'm not sure this makes sense, need to test
+
+            if beta <= alpha:
+                break
+
         return minEva
 
 
@@ -155,7 +168,8 @@ def run_code_tests():
     b2 = np.array([[0, 0, 0], [1, -1, 1], [0, 0, 0]])
     b3 = np.array([[0, 0, 0], [0, 0, 0], [0, 0, 0]])
     b4 = np.array(
-    [[1, 0, 0, 0], [0, 1, 0, -1], [0, -1, 1, 0], [0, 0, 0, -1]])
+        [[1, 0, 0, 0], [0, 1, 0, -1], [0, -1, 1, 0], [0, 0, 0, -1]]
+    )
 
     # Minimax for a board: evaluate the board
     #    expect win for X (1)  < 200 boards explored
@@ -165,9 +179,10 @@ def run_code_tests():
     # max_depth = 9  # adjust this for each board
 
     # Making it easier to switch boards:
-    board = b4
+    board = b2
     max_depth = np.count_nonzero(board == 0)
-    print(f"Running minimax w/ max depth {max_depth} for:\n", board)
+    print(f"Running minimax w/ max depth {max_depth} for:\n")
+    print(showBoard(board))
 
     if np.sum(board) == 0:
         is_x_to_move = True
@@ -177,9 +192,11 @@ def run_code_tests():
         print("illegal board")
         exit
 
+    alpha = -math.inf
+    beta = math.inf
     # read time before and after call to minimax
     print(time.ctime())
-    score = minimax(board, max_depth, is_x_to_move)
+    score = minimax(board, max_depth, alpha, beta, is_x_to_move)
     print(time.ctime())
 
     print(f"score : {score}")
