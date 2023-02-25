@@ -115,8 +115,6 @@ def minimax(board, depth, alpha, beta, maximizingPlayer):
 
     if maximizingPlayer:  # max player plays X
         maxEva = -math.inf
-        # alpha = -math.inf
-        # beta = math.inf
         child_list = get_child_boards(board, "X")
 
         for child_board in child_list:
@@ -132,12 +130,10 @@ def minimax(board, depth, alpha, beta, maximizingPlayer):
     else:  # minimizing player
         minEva = math.inf
         child_list = get_child_boards(board, "O")
-        # print(f"Min child lists:\n",child_list, "\n")
         for child_board in child_list:
             eva = minimax(child_board, depth - 1, alpha, beta, True)
             minEva = min(minEva, eva)
-            beta = min(beta, minEva)
-            # note the article says minEva should be eva, I'm not sure that makes sense, need to test
+            beta = min(beta, minEva) # both eva and minEva work here
 
             if beta <= alpha:
                 break
