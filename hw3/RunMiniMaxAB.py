@@ -46,25 +46,24 @@ def get_board_one_line(board):
 
 
 def evaluate(board):
-    i = 0
-    while i <= board.shape[0] - 1:
-        if (
-            np.sum(board, 0)[i] == board.shape[0]
-            or np.sum(board, 1)[i] == board.shape[0]
-            or np.sum(np.diagonal(board)) == board.shape[0]
-            or np.sum(np.fliplr(board).diagonal()) == board.shape[0]
-        ):
-            return 1
+    win_criteria = board.shape[0]
+    # Check rows, columns, diagonal for 'X' win
+    if (
+        win_criteria in board.sum(axis=0)
+        or win_criteria in board.sum(axis=1)
+        or np.sum(np.diagonal(board)) == win_criteria
+        or np.sum(np.fliplr(board).diagonal()) == win_criteria
+    ):
+        return 1
 
-        elif (
-            np.sum(board, 0)[i] == -1 * board.shape[0]
-            or np.sum(board, 1)[i] == -1 * board.shape[0]
-            or np.sum(np.diagonal(board)) == -1 * board.shape[0]
-            or np.sum(np.fliplr(board).diagonal())
-            == -1 * board.shape[0]
-        ):
-            return -1
-        i += 1
+    # Check rows, columns, diagonal for 'O' win
+    elif (
+        -1 * win_criteria in board.sum(axis=0)
+        or -1 * win_criteria in board.sum(axis=1)
+        or np.sum(np.diagonal(board)) == -1 * win_criteria
+        or np.sum(np.fliplr(board).diagonal()) == -1 * win_criteria
+    ):
+        return -1
 
     return 0
 
@@ -72,10 +71,11 @@ def evaluate(board):
 def is_terminal_node(board):
 
     board_val = evaluate(board)
+    zero_in_board = 0 in board
 
     if board_val == 1 or board_val == -1:
         return True
-    elif board_val == 0 and np.argwhere(board == 0).size == 0:
+    elif board_val == 0 and not zero_in_board:
         return True
     else:
         return False
@@ -136,9 +136,8 @@ def minimax(board, depth, alpha, beta, maximizingPlayer):
         for child_board in child_list:
             eva = minimax(child_board, depth - 1, alpha, beta, True)
             minEva = min(minEva, eva)
-            beta = min(
-                beta, minEva
-            )  # note the article says minEva should be eva, I'm not sure this makes sense, need to test
+            beta = min(beta, minEva)
+            # note the article says minEva should be eva, I'm not sure that makes sense, need to test
 
             if beta <= alpha:
                 break
@@ -182,7 +181,7 @@ def run_code_tests():
     board = b4
     max_depth = np.count_nonzero(board == 0)
     print(f"Running minimax w/ max depth {max_depth} for:\n")
-    print(showBoard(board))
+    showBoard(board)
 
     if np.sum(board) == 0:
         is_x_to_move = True

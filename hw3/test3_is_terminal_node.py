@@ -6,31 +6,30 @@ import numpy as np
 
 def evaluate(board):
 
-    i = 0
-    while i <= board.shape[0] - 1:
+    win_criteria = board.shape[0]
+    # Check rows, columns, diagonal for 'X' win
+    if (
+        win_criteria in board.sum(axis=0)
+        or win_criteria in board.sum(axis=1)
+        or np.sum(np.diagonal(board)) == win_criteria
+        or np.sum(np.fliplr(board).diagonal()) == win_criteria
+    ):
+        return 1
 
-        if (
-            np.sum(board, 0)[i] == board.shape[0]
-            or np.sum(board, 1)[i] == board.shape[0]
-            or np.sum(np.diagonal(board)) == board.shape[0]
-            or np.sum(np.fliplr(board).diagonal()) == board.shape[0]
-        ):
-            return 1
-
-        elif (
-            np.sum(board, 0)[i] == -1 * board.shape[0]
-            or np.sum(board, 1)[i] == -1 * board.shape[0]
-            or np.sum(np.diagonal(board)) == -1 * board.shape[0]
-            or np.sum(np.fliplr(board).diagonal())
-            == -1 * board.shape[0]
-        ):
-            return -1
-        i += 1
+    # Check rows, columns, diagonal for 'O' win
+    elif (
+        -1 * win_criteria in board.sum(axis=0)
+        or -1 * win_criteria in board.sum(axis=1)
+        or np.sum(np.diagonal(board)) == -1 * win_criteria
+        or np.sum(np.fliplr(board).diagonal()) == -1 * win_criteria
+    ):
+        return -1
 
     return 0
 
 
 def is_terminal_node(board):
+    '''
     board_val = evaluate(board)
 
     if board_val == 1 or board_val == -1:
@@ -39,7 +38,17 @@ def is_terminal_node(board):
         return True
     else:
         return False
+    '''
 
+    board_val = evaluate(board)
+    zero_in_board = 0 in board
+
+    if board_val == 1 or board_val == -1:
+        return True
+    elif board_val == 0 and not zero_in_board:
+        return True
+    else:
+        return False
 
 #### TEST CODE ##########
 def run_tests():

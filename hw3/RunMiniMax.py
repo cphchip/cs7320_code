@@ -5,7 +5,6 @@ import numpy as np
 import time
 import copy
 
-# from copy import copy
 COUNT = 0  # use the COUNT variable to track number of boards explored
 
 
@@ -46,57 +45,23 @@ def get_board_one_line(board):
 
 
 def evaluate(board):
-    if (board.shape[0] in board.sum(axis=0) 
-        or board.shape[0] in board.sum(axis=1)
-        or np.sum(np.diagonal(board)) == board.shape[0] 
-        or np.sum(np.fliplr(board).diagonal()) == board.shape[0]
-    ):
-        return 1
 
-    elif (-1 * board.shape[0] in board.sum(axis=1) 
-        or -1 * board.shape[0] in board.sum(axis=1)
-        or np.sum(np.diagonal(board)) == -1 * board.shape[0]
-        or np.sum(np.fliplr(board).diagonal() == -1 * board.shape[0])    
-    ):
-        return -1
-    else:
-        return 0
-    
-    
-    
-    
-    # i = 0
-    # while i <= board.shape[0] - 1:
-    #     # Check for 'X' winner
-    #     if (
-    #         np.sum(board, 0)[i] == board.shape[0]
-    #         or np.sum(board, 1)[i] == board.shape[0]
-    #         # or np.sum(np.diagonal(board)) == board.shape[0]
-    #         # or np.sum(np.fliplr(board).diagonal()) == board.shape[0]
-    #     ):
-    #         return 1
-
-    #     # Check for 'O' winner
-    #     elif (
-    #         np.sum(board, 0)[i] == -1 * board.shape[0]
-    #         or np.sum(board, 1)[i] == -1 * board.shape[0]
-    #         # or np.sum(np.diagonal(board)) == -1 * board.shape[0]
-    #         # or np.sum(np.fliplr(board).diagonal())
-    #         # == -1 * board.shape[0]
-    #     ):
-    #         return -1
-    #     i += 1
-
-    # Check diagonals for 'X' or 'O' winners
+    win_criteria = board.shape[0]
+    # Check rows, columns, diagonal for 'X' win
     if (
-        np.sum(np.diagonal(board)) == board.shape[0] 
-        or np.sum(np.fliplr(board).diagonal()) == board.shape[0]
+        win_criteria in board.sum(axis=0)
+        or win_criteria in board.sum(axis=1)
+        or np.sum(np.diagonal(board)) == win_criteria
+        or np.sum(np.fliplr(board).diagonal()) == win_criteria
     ):
         return 1
 
+    # Check rows, columns, diagonal for 'O' win
     elif (
-        np.sum(np.diagonal(board)) == -1 * board.shape[0]
-        or np.sum(np.fliplr(board).diagonal() == -1 * board.shape[0])
+        -1 * win_criteria in board.sum(axis=0)
+        or -1 * win_criteria in board.sum(axis=1)
+        or np.sum(np.diagonal(board)) == -1 * win_criteria
+        or np.sum(np.fliplr(board).diagonal()) == -1 * win_criteria
     ):
         return -1
 
@@ -106,10 +71,11 @@ def evaluate(board):
 def is_terminal_node(board):
 
     board_val = evaluate(board)
+    zero_in_board = 0 in board
 
     if board_val == 1 or board_val == -1:
         return True
-    elif board_val == 0 and np.argwhere(board == 0).size == 0:
+    elif board_val == 0 and not zero_in_board:
         return True
     else:
         return False
@@ -125,7 +91,7 @@ def get_child_boards(board, char):
         newval = 1
 
     child_list = []
-    zero_values = np.argwhere(board == 0)  # Determine indeces of zeros
+    zero_values = np.argwhere(board == 0)  # Determine index of zeros
     temp_arr = []
 
     for indice in zero_values:
@@ -144,14 +110,12 @@ def minimax(board, depth, maximizingPlayer):
     """
     global COUNT
     COUNT += 1
-    # print(board) # Debug line
     if depth == 0 or is_terminal_node(board):
         return evaluate(board)
 
     if maximizingPlayer:  # max player plays X
         maxEva = -math.inf
         child_list = get_child_boards(board, "X")
-        # print(f"Max child lists:\n",child_list, "\n")
         for child_board in child_list:
             eva = minimax(child_board, depth - 1, False)
             maxEva = max(maxEva, eva)
@@ -160,7 +124,6 @@ def minimax(board, depth, maximizingPlayer):
     else:  # minimizing player
         minEva = math.inf
         child_list = get_child_boards(board, "O")
-        # print(f"Min child lists:\n",child_list, "\n")
         for child_board in child_list:
             eva = minimax(child_board, depth - 1, True)
             minEva = min(minEva, eva)
@@ -194,9 +157,10 @@ def run_code_tests():
     )
 
     # Making it easier to switch boards:
-    board = b3
+    board = b4
     max_depth = np.count_nonzero(board == 0)
-    print(f"Running minimax w/ max depth {max_depth} for:\n", board)
+    print(f"Running minimax w/ max depth {max_depth} for:\n")
+    showBoard(board)
 
     if np.sum(board) == 0:
         is_x_to_move = True
@@ -204,7 +168,7 @@ def run_code_tests():
         is_x_to_move = False
     else:
         print("illegal board")
-        exit
+        exit()
 
     # read time before and after call to minimax
     print(time.ctime())
