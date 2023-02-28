@@ -101,17 +101,18 @@ def get_child_boards(board, char):
 
         priority = 0
         if (
-            board.sum(axis=0) > 1 
-            or board.sum(axis=0) < -1
-            or board.sum(axis=1) > 1 
-            or board.sum(axis=1) < -1
-            or np.sum(np.diagonal(board)) > 1 
-            or np.sum(np.fliplr(board).diagonal()) < -1
+            (board.shape[0] - 1) in board.sum(axis=0)
+            or (-1 * board.shape[0] - 1) in board.sum(axis=0)
+            or (board.shape[0] - 1) in board.sum(axis=1)
+            or (-1 * board.shape[0] - 1) in board.sum(axis=1)
+            or np.sum(np.diagonal(board)) == board.shape[0] - 1
+            or np.sum(np.fliplr(board).diagonal())
+            == -1 * board.shape[0] - 1
         ):
             priority = 1
         else:
             priority = 2
- 
+
         child_list.setdefault(priority, [temp_arr])
         # child_list.append(temp_arr)
 
@@ -149,7 +150,7 @@ def minimax(board, depth, alpha, beta, maximizingPlayer):
         for child_board in child_list:
             eva = minimax(child_board, depth - 1, alpha, beta, True)
             minEva = min(minEva, eva)
-            beta = min(beta, minEva) # both eva and minEva work here
+            beta = min(beta, minEva)  # both eva and minEva work here
 
             if beta <= alpha:
                 break
