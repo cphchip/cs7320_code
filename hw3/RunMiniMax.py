@@ -92,12 +92,12 @@ def get_child_boards(board, char):
 
     child_list = []
     zero_values = np.argwhere(board == 0)  # Determine index of zeros
-    temp_arr = []
+    temp_board = []
 
     for indice in zero_values:
-        temp_arr = copy.deepcopy(board)
-        temp_arr[indice[0]][indice[1]] = newval
-        child_list.append(temp_arr)
+        temp_board = copy.deepcopy(board)
+        temp_board[indice[0]][indice[1]] = newval
+        child_list.append(temp_board)
 
     return child_list
 
