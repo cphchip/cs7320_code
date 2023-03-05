@@ -114,6 +114,7 @@ def get_child_boards(board, char):
             priority = 2
 
         child_list.setdefault(priority, [temp_board])
+        child_list.add
         # child_list.append(temp_board)
 
     return child_list

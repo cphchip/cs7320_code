@@ -92,7 +92,7 @@ def get_child_boards(board, char):
 
     child_list = []
     zero_values = np.argwhere(board == 0)  # Determine indeces of zeros
-    temp_board = [] # Note this is not an array but really a list, consider changing the name
+    temp_board = [] 
 
     for indice in zero_values:
         temp_board = copy.deepcopy(board)
