@@ -4,8 +4,8 @@ import math
 import numpy as np
 import time
 import copy
+from queue import PriorityQueue
 
-# from copy import copy
 COUNT = 0  # use the COUNT variable to track number of boards explored
 
 
@@ -90,32 +90,32 @@ def get_child_boards(board, char):
     if char == "X":
         newval = 1
 
-    # child_list = []
-    child_list = {}
+    child_list = PriorityQueue()
     zero_values = np.argwhere(board == 0)  # Determine indeces of zeros
     temp_board = []
+    insertion_order = 0
 
     for indice in zero_values:
         temp_board = copy.deepcopy(board)
         temp_board[indice[0]][indice[1]] = newval
-
+        insertion_order += 1
         priority = 0
+
         if (
-            (board.shape[0] - 1) in board.sum(axis=0)
-            or (-1 * board.shape[0] - 1) in board.sum(axis=0)
-            or (board.shape[0] - 1) in board.sum(axis=1)
-            or (-1 * board.shape[0] - 1) in board.sum(axis=1)
-            or np.sum(np.diagonal(board)) == board.shape[0] - 1
-            or np.sum(np.fliplr(board).diagonal())
-            == -1 * board.shape[0] - 1
+            temp_board.shape[0] - 1 in temp_board.sum(axis=0)
+            or (-1 * temp_board.shape[0]) + 1 in temp_board.sum(axis=0)
+            or temp_board.shape[0] - 1 in temp_board.sum(axis=1)
+            or (-1 * temp_board.shape[0]) + 1 in temp_board.sum(axis=1)
+            or temp_board.shape[0] - 1 == np.sum(np.diagonal(temp_board))
+            or (-1 * temp_board.shape[0]) + 1 == np.sum(np.diagonal(temp_board))
+            or temp_board.shape[0] - 1 == np.sum(np.fliplr(temp_board).diagonal())
+            or (-1 * temp_board.shape[0]) + 1 == np.sum(np.fliplr(temp_board).diagonal())
         ):
             priority = 1
         else:
             priority = 2
 
-        child_list.setdefault(priority, [temp_board])
-        child_list.add
-        # child_list.append(temp_board)
+        child_list.put((priority, insertion_order, temp_board))
 
     return child_list
 
@@ -135,8 +135,9 @@ def minimax(board, depth, alpha, beta, maximizingPlayer):
         maxEva = -math.inf
         child_list = get_child_boards(board, "X")
 
-        for child_board in child_list:
-            eva = minimax(child_board, depth - 1, alpha, beta, False)
+        # for child_board in child_list:
+        while not child_list.empty():
+            eva = minimax(child_list.get()[2], depth - 1, alpha, beta, False)
             maxEva = max(maxEva, eva)
             alpha = max(alpha, maxEva)
 
@@ -148,8 +149,9 @@ def minimax(board, depth, alpha, beta, maximizingPlayer):
     else:  # minimizing player
         minEva = math.inf
         child_list = get_child_boards(board, "O")
-        for child_board in child_list:
-            eva = minimax(child_board, depth - 1, alpha, beta, True)
+        # print(child_list.get()[2])
+        while not child_list.empty():
+            eva = minimax(child_list.get()[2], depth - 1, alpha, beta, True)
             minEva = min(minEva, eva)
             beta = min(beta, minEva)  # both eva and minEva work here
 
@@ -192,7 +194,7 @@ def run_code_tests():
     # max_depth = 9  # adjust this for each board
 
     # Making it easier to switch boards:
-    board = b4
+    board = b3
     max_depth = np.count_nonzero(board == 0)
     print(f"Running minimax w/ max depth {max_depth} for:\n")
     showBoard(board)
