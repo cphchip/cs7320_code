@@ -308,9 +308,10 @@ def main(game_level):
         else:  # play game  -------------------------
             move_count += 1
             pygame.display.update()
+            is_blocked = False
 
             # CALL ROBO VAC --Returns Direction based on location
-            dir = robo_vac.get_next_move(room.vac_pos)
+            dir = robo_vac.get_next_move(room.vac_pos, room.max_x, room.max_y)
             #  ###################################################
 
             # Determine if direction results in legal move
@@ -333,8 +334,10 @@ def main(game_level):
 
             if (x, y) == room.vac_pos:  # tried to go beyond room
                 print(f"dir={dir}  BLOCKED: WALL")
+                is_blocked = True
             elif (x, y) in room.block_tiles_set:
                 print(f"dir={dir} BLOCKED: FURNITURE")
+                is_blocked = True
             else:
                 room.vac_pos = (x, y)  # update vacuum position
                 room.add_clean_pos(room.vac_pos)  # track new clean tile
