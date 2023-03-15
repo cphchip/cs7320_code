@@ -10,7 +10,7 @@ import pygame
 import sys
 
 # modify RoboVac0 or copy and create your own file
-from RoboVac1 import RoboVac
+from RoboVac2 import RoboVac
 
 BLACK = (0, 0, 0)
 GOLD = (200, 0, 0)
@@ -103,7 +103,8 @@ class Room:
                 for y in range(b[1], b[1] + b[3]):
                     self.block_tiles_set.add((x, y))
 
-        self.free_tiles_set = self.free_tiles_set - self.block_tiles_set
+        self.free_tiles_set = (self.free_tiles_set 
+                               - self.block_tiles_set)
 
         # easily get max number of tiles that need cleaning
         self.max_tiles = len(self.free_tiles_set)
@@ -375,7 +376,7 @@ if __name__ == "__main__":
     5 = 10 blocks
     """
 
-    game_level = 1  # OK to change this from easy to more complex
+    game_level = 2  # OK to change this from easy to more complex
 
     # calls main with the game level & runs the simulation
     main(game_level)

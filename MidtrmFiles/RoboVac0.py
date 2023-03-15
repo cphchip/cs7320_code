@@ -24,14 +24,14 @@ class RoboVac:
         self.name = "Chip Henderson"
         self.id = "48996654"
 
-    def get_next_move(
-        self, current_pos, max_x, max_y
-    ):  # called by PyGame code
+
+    def get_next_move(self, current_pos):  # called by PyGame code
         # Return a direction for the vacuum to move
         # random walk 0=north # 1=east 2=south 3=west
 
         global visited_list
         visited_list.append(current_pos)
+        max_x, max_y = self.room_width, self.room_height
 
         # Check surrounding cells and move appropriate direction
         if (
@@ -49,13 +49,13 @@ class RoboVac:
         elif (
             current_pos[0] + 1,
             current_pos[1],
-        ) not in visited_list and current_pos[0] != max_x:
+        ) not in visited_list and current_pos[0] != max_x - 1:
             return 1
 
         elif (
             current_pos[0],
             current_pos[1] + 1,
-        ) not in visited_list and current_pos[1] != max_y:
+        ) not in visited_list and current_pos[1] != max_y - 1:
             return 2
         else:
             return random.choice([0, 1, 2, 3])

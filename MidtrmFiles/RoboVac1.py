@@ -11,9 +11,8 @@ exec will : create instance and in game loop call : nextMove()  ??
 import random
 import numpy as np
 
-visited_list = []  # note clean_set does same thing, is this needed?
+visited_list = []
 blocked_tile_list = []
-# Also if we know the clean_set do we know the 'dirty_set?'
 
 
 class RoboVac:
@@ -21,8 +20,8 @@ class RoboVac:
         self.room_width, self.room_height = config_list[0]
         self.pos = config_list[1]  # starting position of vacuum
         self.block_list = config_list[2]  # blocks list (x,y,width,ht)
-        # self.blocked_tile_list = []
 
+        # Create a list of the blocked tiles
         count = 0
         global blocked_tile_list
         while count < self.block_list[0][2] * self.block_list[0][3]:
@@ -32,37 +31,24 @@ class RoboVac:
             count += 1
         
         global visited_list
+        
+        # Treat blocked as visited for simplicity
         for tile in blocked_tile_list:
-            visited_list.append(tile)
+            visited_list.append(tile) 
 
-        # fill in with your info
         self.name = "Chip Henderson"
         self.id = "48996654"
 
+
     def get_next_move(self, vac_pos):  # called by PyGame code
         # Return a direction for the vacuum to move
-        # random walk 0=north # 1=east 2=south 3=west
-
         max_x, max_y = self.room_width, self.room_height
         vac_x, vac_y = vac_pos[0], vac_pos[1]
         global visited_list
         visited_list.append((vac_x, vac_y))
         global blocked_tile_list
 
-
-        # Check for adjacent blocked cells
-        # if (vac_x > 0 
-        #     and vac_y > 0 
-        #     and vac_x < max_x -1 
-        #     and vac_y < max_y -1
-        # ):
-        #     if (vac_x - 1, vac_y) not in blocked_tile_list:
-        #         return 1
-
-
-
         # Check surrounding cells and move appropriate direction
-        # if (vac_x)
         if ((vac_x - 1, vac_y) not in visited_list
             and vac_x != 0
         ):
