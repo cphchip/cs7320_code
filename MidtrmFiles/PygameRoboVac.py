@@ -311,7 +311,7 @@ def main(game_level):
 
             is_blocked = False
             # CALL ROBO VAC --Returns Direction based on location
-            dir = robo_vac.get_next_move(room.vac_pos, room.max_x, room.max_y, is_blocked)
+            dir = robo_vac.get_next_move(room.vac_pos)
             #  ###################################################
 
             # Determine if direction results in legal move
