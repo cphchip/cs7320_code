@@ -11,8 +11,9 @@ exec will : create instance and in game loop call : nextMove()  ??
 import random
 import numpy as np
 
-visited_list = []
-blocked_tile_list = []
+visited_set = set()
+# blocked_tile_set = set()
+# block_tiles_set = set()
 
 
 class RoboVac:
@@ -20,32 +21,30 @@ class RoboVac:
         self.room_width, self.room_height = config_list[0]
         self.pos = config_list[1]  # starting position of vacuum
         self.block_list = config_list[2]  # blocks list (x,y,width,ht)
+        self.blocked_tiles_set = set()
+        self.free_tiles_set = set()
 
-        # Create a list of the blocked tiles
-        count = 0
-        global blocked_tile_list
+        # Copied code from Pygame to determine all tiles
+        self.free_tiles_set = set()
+        for x in range(self.room_width):
+            for y in range(self.room_height):
+                self.free_tiles_set.add((x, y))
 
-        blocked_dims = [x[2] * x[3] for x in self.block_list]
-        blocked_qty = sum(blocked_dims)
+        # Copied code from Pygame to determine blocked cells
+        for b in self.block_list:
+            for x in range(b[0], b[0] + b[2]):
+                for y in range(b[1], b[1] + b[3]):
+                    self.blocked_tiles_set.add((x, y))
 
-        # for blocks in self.block_list:
-        #     while (count < self.block_list[0][2] 
-        #            * self.block_list[0][3]
-        #         ):
-        #         blocking_tile = (self.block_list[0][0] 
-        #                         + count, self.block_list[0][1])
-        #         blocked_tile_list.append(blocking_tile)
-        #         count += 1
-        for blocks in range(blocked_qty):
-            blocking_tile = (self.block_list[blocks][0], 
-                             self.block_list[blocks][1])
-            blocked_tile_list.append(blocking_tile)
-        
-        global visited_list
+        self.free_tiles_set = (self.free_tiles_set 
+                               - self.blocked_tiles_set)
+
+
+        global visited_set
         
         # Treat blocked as visited for simplicity
-        for tile in blocked_tile_list:
-            visited_list.append(tile) 
+        for tile in self.blocked_tiles_set:
+            visited_set.add(tile) 
 
         self.name = "Chip Henderson"
         self.id = "48996654"
@@ -55,36 +54,33 @@ class RoboVac:
         # Return a direction for the vacuum to move
         max_x, max_y = self.room_width, self.room_height
         vac_x, vac_y = vac_pos[0], vac_pos[1]
-        global visited_list
-        visited_list.append((vac_x, vac_y))
-        global blocked_tile_list
+        global visited_set
+        visited_set.add((vac_x, vac_y))
+        # global blocked_tile_set
 
         # Check surrounding cells and move appropriate direction
-        if ((vac_x - 1, vac_y) not in visited_list
+        if ((vac_x - 1, vac_y) not in visited_set
             and vac_x != 0
         ):
             return 3
-        elif ((vac_x, vac_y - 1) not in visited_list 
+        elif ((vac_x, vac_y - 1) not in visited_set 
             and vac_y != 0
         ):
             return 0
-        elif ((vac_x + 1, vac_y) not in visited_list
+        elif ((vac_x + 1, vac_y) not in visited_set
             and vac_x != max_x - 1
         ):
             return 1
-        elif ((vac_x, vac_y + 1) not in visited_list
+        elif ((vac_x, vac_y + 1) not in visited_set
             and vac_y != max_y - 1
         ):
             return 2
         else:  # if we get stuck
             return random.choice([0, 1, 2, 3])
 
-    def get_child_floor_list(self, current_pos, max_x, max_y):
+    def get_child_floor_list(self, current_pos):
 
         """Uses code modified from 8-game homework"""
-
-        """Not used at this time
-
         # Get x,y of surrounding blocks of current pos
         x, y = current_pos
         try:
@@ -160,4 +156,3 @@ class RoboVac:
             # child0 = North move
             # child1 = East move
             return
-        """

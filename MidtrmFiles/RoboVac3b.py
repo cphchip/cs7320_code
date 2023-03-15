@@ -25,6 +25,7 @@ class RoboVac:
         self.free_tiles_set = set()
 
         # Copied code from Pygame to determine all tiles
+        # Note this may need to to different function if updates are needed at each turn
         self.free_tiles_set = set()
         for x in range(self.room_width):
             for y in range(self.room_height):
@@ -40,8 +41,15 @@ class RoboVac:
                                - self.blocked_tiles_set)
 
 
-        global visited_set
+        # Structure copied from HW2, content updated
+        # create map - node -> [child, child]
+        self.node_map = {}
+        for i in self.free_tiles_set:
+            self.node_map.setdefault(i[0],[]).append(i[1])
         
+        
+        
+        global visited_set
         # Treat blocked as visited for simplicity
         for tile in self.blocked_tiles_set:
             visited_set.add(tile) 
@@ -56,8 +64,8 @@ class RoboVac:
         vac_x, vac_y = vac_pos[0], vac_pos[1]
         global visited_set
         visited_set.add((vac_x, vac_y))
-        # global blocked_tile_set
 
+        '''Old code replaced by dfs code
         # Check surrounding cells and move appropriate direction
         if ((vac_x - 1, vac_y) not in visited_set
             and vac_x != 0
@@ -77,7 +85,45 @@ class RoboVac:
             return 2
         else:  # if we get stuck
             return random.choice([0, 1, 2, 3])
+        '''
 
+        # Structure copied from HW2, content updated
+        stack = [ (self.pos, [self.pos])]
+
+        while stack:
+            # note pop()  returns LAST value in list
+            (vertex, path) = stack.pop()
+            # global dfs_count
+            # dfs_count += 1
+            next_node_list = [x for x in self.node_map[vertex] if x not in set(path)]
+            for next in next_node_list:
+                if next == goal:
+                    # yield path + [next]
+                    print(f"DFS count is ", dfs_count)
+                    return path + [next]
+                else:
+                    stack.append( (next, path + [next]))
+
+    def dfs_all_paths(graph, start, goal):
+        # Structure copied from HW2, content updated
+        stack = [ (start, [start])]
+
+        while stack:
+            # note pop()  returns LAST value in list
+            (vertex, path) = stack.pop()
+            global dfs_count
+            dfs_count += 1
+            next_node_list = [x for x in graph[vertex] if x not in set(path)]
+            for next in next_node_list:
+                if next == goal:
+                    # yield path + [next]
+                    print(f"DFS count is ", dfs_count)
+                    return path + [next]
+                else:
+                    stack.append( (next, path + [next]))
+
+    
+    
     def get_child_floor_list(self, current_pos):
 
         """Uses code modified from 8-game homework"""
@@ -99,6 +145,7 @@ class RoboVac:
             move_up = (x, y - 1)
         except IndexError:
             move_up = None
+
 
         # Consider board conditions for possible moves
         if x > 0 and y > 0:  # Center condition

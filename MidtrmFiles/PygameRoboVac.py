@@ -10,7 +10,7 @@ import pygame
 import sys
 
 # modify RoboVac0 or copy and create your own file
-from RoboVac2 import RoboVac
+from RoboVac3 import RoboVac
 
 BLACK = (0, 0, 0)
 GOLD = (200, 0, 0)
@@ -376,7 +376,7 @@ if __name__ == "__main__":
     5 = 10 blocks
     """
 
-    game_level = 2  # OK to change this from easy to more complex
+    game_level = 3  # OK to change this from easy to more complex
 
     # calls main with the game level & runs the simulation
     main(game_level)
