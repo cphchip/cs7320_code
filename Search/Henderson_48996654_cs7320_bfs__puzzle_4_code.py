@@ -341,7 +341,7 @@ def main():
         [13, 14, 15, 0],
     ]
 
-    print(bfs2_euclidean(start_state, goal_state))
+    print(bfs2(start_state, goal_state))
 
 
 # Declare global board count variable
