@@ -81,7 +81,7 @@ class RoboVac:
 
         while queue:
             path = queue.pop(0)
-            print("next path")
+            # print("next path")
             vertex = path[-1][1]
             cur_pos = path[-1][0] 
             child_list = self.get_child_floor_list(cur_pos, vertex)
@@ -191,7 +191,7 @@ class RoboVac:
             
             return children
 
-        if row == 0 and col > 0:  # Top edge 
+        if row == 0 and col > 0 and col < max_col:  # Top edge 
             if (move_east not in array_blocked_tiles 
                 and move_east not in array_visited_tiles
             ):
