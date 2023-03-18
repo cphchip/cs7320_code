@@ -14,7 +14,7 @@ import copy
 
 visited_set = set()
 floor = np.array
-queue = []
+# queue = []
 move_list = []
 call_count = 0
 
@@ -50,10 +50,10 @@ class RoboVac:
         for b_tile in self.blocked_tiles_set:
             floor[b_tile[1], b_tile[0]] = -1
 
-        global visited_set
-        # Treat blocked as visited for simplicity
-        for tile in self.blocked_tiles_set:
-            visited_set.add(tile) 
+        # global visited_set
+        # # Treat blocked as visited for simplicity
+        # for tile in self.blocked_tiles_set:
+        #     visited_set.add(tile) 
 
         self.name = "Chip Henderson"
         self.id = "48996654"
@@ -61,16 +61,11 @@ class RoboVac:
 
     def get_next_move(self, vac_pos):  # called by PyGame code
         # Return a direction for the vacuum to move
-        vac_x, vac_y = vac_pos[0], vac_pos[1]
-        # global visited_set
-        # visited_set.add((vac_x, vac_y)) # I don't think this is needed here
         global call_count
         global move_list
 
         if call_count == 0:
             move_list = self.next_step(vac_pos)
-            # for x in arr_path_list:
-            #     path_list.append(x[::-1]) # convert back to x,y from arr
         call_count += 1
         
         return move_list[call_count]
@@ -79,31 +74,27 @@ class RoboVac:
     def next_step(self, vac_pos):
 
         '''Copied from 8-game - BFS'''
-        global queue
+        # global queue
         global visited_set
         # curr_pos = vac_pos
         arr_pos = vac_pos[::-1]
-        # queue = [[(arr_pos, floor.tolist())]]
-        queue = [[(None, arr_pos, floor.tolist())]]
+        queue = [[(None, arr_pos, floor)]] # If this causes error put floor.tolist() back
         goal_board = len(self.free_tiles_set)
         final_path = []
 
         while queue:
             path = queue.pop(0)
-            # print("next path")
-            # vertex = path[-1][1]
-            # cur_pos = path[-1][0] 
+            for items in path:
+                visited_set.add((items[1])) # In array format (row, col)
             vertex = path[-1][2]
             cur_pos = path[-1][1] 
             child_list = self.get_child_floor_list(cur_pos, vertex)
 
-            next_node_list = [x for x in child_list if x not in path]
+            # debug_var = len(path)
+            next_node_list = [x for x in child_list if x[2] not in path]
 
             for next in next_node_list:
-                visited_set.add(next[1])
-                # print (np.sum(next[1])) # Debug line
-                # print(len(path)) # Debug line
-                if np.sum(next[2]) == goal_board or len(path) == 12:
+                if np.sum(next[2]) == goal_board or len(path) == 20:
                     for x in path:
                         final_path.append(x[0])
                     return final_path
@@ -120,8 +111,9 @@ class RoboVac:
         for b_tiles in self.blocked_tiles_set:
             array_blocked_tiles.add(b_tiles[::-1])
 
-        for v_tiles in visited_set:
-            array_visited_tiles.add(v_tiles[::-1])
+        # for v_tiles in visited_set:
+        #     array_visited_tiles.add((v_tiles))
+        array_visited_tiles = visited_set
 
         # array_blocked_tiles = reversed(self.blocked_tiles_set)
         children = []
@@ -147,361 +139,232 @@ class RoboVac:
             if (move_north not in array_blocked_tiles 
                 and move_north not in array_visited_tiles
             ):
-                # child0 = copy.deepcopy(current_floor)
-                # child0[move_north] = 1
-                # new_pos_0 = move_north
-                # children.append([(move_north), child0.tolist()])
                 child0 = self.child_gen(0, current_floor, move_north)
                 children.append(child0)
-            else:
-                child0 = None
 
             if (move_east not in array_blocked_tiles 
                 and move_east not in array_visited_tiles
             ):
-                # child1 = copy.deepcopy(current_floor)
-                # child1[move_east] = 1
-                # # new_pos_1 = move_east
-                # children.append([(move_east), child1.tolist()])
                 child1 = self.child_gen(1, current_floor, move_east)
                 children.append(child1)
-            else:
-                child1 = None
 
             if (move_south not in array_blocked_tiles 
                 and move_south not in array_visited_tiles
             ):
-                # child2 = copy.deepcopy(current_floor)
-                # child2[move_south] = 1
-                # # new_pos_2 = move_south
-                # children.append([(move_south), child2.tolist()])
                 child2 = self.child_gen(2, current_floor, move_south)
                 children.append(child2)
-            else:
-                child2 = None
 
             if (move_west not in array_blocked_tiles 
                 and move_west not in array_visited_tiles
             ):
-                # child3 = copy.deepcopy(current_floor)
-                # child3[move_west] = 1
-                # # new_pos_3 = move_west
-                # children.append([(move_west), child3.tolist()])
                 child3 = self.child_gen(3, current_floor, move_west)
                 children.append(child3)
-            else:
-                child3 = None
             
-            return children
+            # return children
         
         elif row == 0 and col == 0:  # Upper left corner 
-            if move_east not in array_blocked_tiles and move_east not in array_visited_tiles:
-                # child1 = copy.deepcopy(current_floor)
-                # child1[move_east] = 1
-                # # new_pos_1 = move_east
-                # children.append([(move_east), child1.tolist()])
+            if (move_east not in array_blocked_tiles 
+                and move_east not in array_visited_tiles
+            ):
                 child1 = self.child_gen(1, current_floor, move_east)
                 children.append(child1)
-            else:
-                child1 = None
             
-            if move_south not in array_blocked_tiles and move_south not in array_visited_tiles:
-                # child2 = copy.deepcopy(current_floor)
-                # child2[move_south] = 1
-                # # new_pos_2 = move_south
-                # children.append([(move_south), child2.tolist()])
+            if (move_south not in array_blocked_tiles 
+                and move_south not in array_visited_tiles
+            ):
                 child2 = self.child_gen(2, current_floor, move_south)
                 children.append(child2)
-            else:
-                child2 = None
             
-            return children
+            # return children
         
         elif row == 0 and col > 0 and col < max_col:  # Top edge 
             if (move_east not in array_blocked_tiles 
                 and move_east not in array_visited_tiles
             ):
-                # child1 = copy.deepcopy(current_floor)
-                # child1[move_east] = 1
-                # new_pos = move_east
-                # children.append([(new_pos), child1.tolist()])
                 child1 = self.child_gen(1, current_floor, move_east)
                 children.append(child1)
-            else:
-                child1 = None
             
-            if move_south not in array_blocked_tiles and move_south not in array_visited_tiles:
-                # child2 = copy.deepcopy(current_floor)
-                # child2[move_south] = 1
-                # # new_pos_2 = move_south
-                # children.append([(move_south), child2.tolist()])
+            if (move_south not in array_blocked_tiles 
+                and move_south not in array_visited_tiles
+            ):
                 child2 = self.child_gen(2, current_floor, move_south)
                 children.append(child2)
-            else:
-                child2 = None
             
             if move_west not in array_blocked_tiles and move_west not in array_visited_tiles:
-                # child3 = copy.deepcopy(current_floor)
-                # child3[move_west] = 1
-                # # new_pos_3 = move_west
-                # children.append([(move_west), child3.tolist()])
                 child3 = self.child_gen(3, current_floor, move_west)
                 children.append(child3)
-            else:
-                child3 = None
             
-            return children
+            # return children
         
         elif row > 0 and col == 0 and row < max_row: # Left edge 
             if move_north not in array_blocked_tiles and move_north not in array_visited_tiles:
-                # child0 = copy.deepcopy(current_floor)
-                # child0[move_north] = 1
-                # # new_pos_0 = move_north
-                # children.append([(move_north), child0.tolist()])
                 child0 = self.child_gen(0, current_floor, move_north)
                 children.append(child0)
-            else:
-                child0 = None
 
-            if move_east not in array_blocked_tiles and move_east not in array_visited_tiles:
-                # child1 = copy.deepcopy(current_floor)
-                # child1[move_east] = 1
-                # # new_pos_1 = move_east
-                # children.append([(move_east), child1.tolist()])
+            if (move_east not in array_blocked_tiles 
+                  and move_east not in array_visited_tiles
+            ):
                 child1 = self.child_gen(1, current_floor, move_east)
                 children.append(child1)
-            else:
-                child1 = None
-            if move_south not in array_blocked_tiles and move_south not in array_visited_tiles:
-                # child2 = copy.deepcopy(current_floor)
-                # child2[move_south] = 1
-                # # new_pos_2 = move_south
-                # children.append([(move_south), child2.tolist()])
+
+            if (move_south not in array_blocked_tiles 
+                  and move_south not in array_visited_tiles
+            ):
                 child2 = self.child_gen(2, current_floor, move_south)
                 children.append(child2)
-            else:
-                child2 = None
             
-            return children
+            # return children
 
         elif row == max_row and col > 0 and col < max_col: # Bottom edge 
-            if move_north not in array_blocked_tiles and move_north not in array_visited_tiles:
-                # child0 = copy.deepcopy(current_floor)
-                # child0[move_north] = 1
-                # # new_pos_0 = move_north
-                # children.append([(move_north), child0.tolist()])
+            if (move_north not in array_blocked_tiles 
+                and move_north not in array_visited_tiles
+            ):
                 child0 = self.child_gen(0, current_floor, move_north)
                 children.append(child0)
-            else:
-                child0 = None
 
-            if move_east not in array_blocked_tiles and move_east not in array_visited_tiles:
-                # child1 = copy.deepcopy(current_floor)
-                # child1[move_east] = 1
-                # # new_pos_1 = move_east
-                # children.append([(move_east), child1.tolist()])
+            if (move_east not in array_blocked_tiles and move_east not in array_visited_tiles
+            ):
                 child1 = self.child_gen(1, current_floor, move_east)
                 children.append(child1)
-            else:
-                child1 = None
 
-            if move_west not in array_blocked_tiles and move_west not in array_visited_tiles:
-                # child3 = copy.deepcopy(current_floor)
-                # child3[move_west] = 1
-                # # new_pos_3 = move_west
-                # children.append([(move_west), child3.tolist()])
+            if (move_west not in array_blocked_tiles 
+                  and move_west not in array_visited_tiles
+            ):
                 child3 = self.child_gen(3, current_floor, move_west)
                 children.append(child3)
-            else:
-                child3 = None
             
-            return children
+            # return children
 
         elif row > 0 and row < max_row and col == max_col: # Right edge
-            if move_north not in array_blocked_tiles and move_north not in array_visited_tiles:
-                # child0 = copy.deepcopy(current_floor)
-                # child0[move_north] = 1
-                # # new_pos_0 = move_north
-                # children.append([(move_north), child0.tolist()])
+            if (move_north not in array_blocked_tiles 
+                and move_north not in array_visited_tiles
+            ):
                 child0 = self.child_gen(0, current_floor, move_north)
                 children.append(child0)
-            else:
-                child0 = None
 
-            if move_south not in array_blocked_tiles and move_south not in array_visited_tiles:
-                # child2 = copy.deepcopy(current_floor)
-                # child2[move_south] = 1
-                # # new_pos_2 = move_south
-                # children.append([(move_south), child2.tolist()])
+            if (move_south not in array_blocked_tiles 
+                  and move_south not in array_visited_tiles
+            ):
                 child2 = self.child_gen(2, current_floor, move_south)
                 children.append(child2)
-            else:
-                child2 = None
 
-            if move_west not in array_blocked_tiles and move_west not in array_visited_tiles:
-                # child3 = copy.deepcopy(current_floor)
-                # child3[move_west] = 1
-                # # new_pos_3 = move_west
-                # children.append([(move_west), child3.tolist()])
+            if (move_west not in array_blocked_tiles 
+                  and move_west not in array_visited_tiles
+            ):
                 child3 = self.child_gen(3, current_floor, move_west)
                 children.append(child3)
-            else:
-                child3 = None
             
-            return children
+            # return children
 
         elif row == max_row and col == max_col: # Bottom right corner 
-            if move_north not in array_blocked_tiles and move_north not in array_visited_tiles:
-                # child0 = copy.deepcopy(current_floor)
-                # child0[move_north] = 1
-                # # new_pos_0 = move_north
-                # children.append([(move_north), child0.tolist()])
+            if (move_north not in array_blocked_tiles 
+                and move_north not in array_visited_tiles
+            ):
                 child0 = self.child_gen(0, current_floor, move_north)
                 children.append(child0)
-            else:
-                child0 = None
 
-            if move_west not in array_blocked_tiles and move_west not in array_visited_tiles:
-                # child3 = copy.deepcopy(current_floor)
-                # child3[move_west] = 1
-                # # new_pos_3 = move_west
-                # children.append([(move_west), child3.tolist()])
+            if (move_west not in array_blocked_tiles 
+                  and move_west not in array_visited_tiles
+            ):
                 child3 = self.child_gen(3, current_floor, move_west)
                 children.append(child3)
-            else:
-                child3 = None
             
-            return children
+            # return children
 
-        elif row == 0 and col == max_col: # Top right corenr
-            if move_south not in array_blocked_tiles and move_south not in array_visited_tiles:
-                # child2 = copy.deepcopy(current_floor)
-                # child2[move_south] = 1
-                # # new_pos_2 = move_south
-                # children.append([(move_south), child2.tolist()])
+        elif row == 0 and col == max_col: # Top right corner
+            if (move_south not in array_blocked_tiles 
+                and move_south not in array_visited_tiles
+            ):
                 child2 = self.child_gen(2, current_floor, move_south)
                 children.append(child2)
-            else:
-                child2 = None
 
-            if move_west not in array_blocked_tiles and move_west not in array_visited_tiles:
-                # child3 = copy.deepcopy(current_floor)
-                # child3[move_west] = 1
-                # # new_pos_3 = move_west
-                # children.append([(move_west), child3.tolist()])
+            if (move_west not in array_blocked_tiles 
+                and move_west not in array_visited_tiles
+            ):
                 child3 = self.child_gen(3, current_floor, move_west)
                 children.append(child3)
-            else:
-                child3 = None
             
-            return children
+            # return children
 
         elif row == 0 and col == 0: # Top left corner
-            if move_east not in array_blocked_tiles and move_east not in array_visited_tiles:
-                # child1 = copy.deepcopy(current_floor)
-                # child1[move_east] = 1
-                # # new_pos_1 = move_east
-                # children.append([(move_east), child1.tolist()])
+            if (move_east not in array_blocked_tiles 
+                and move_east not in array_visited_tiles
+            ):
                 child1 = self.child_gen(1, current_floor, move_east)
                 children.append(child1)
-            else:
-                child1 = None
 
-            if move_south not in array_blocked_tiles and move_south not in array_visited_tiles:
-                # child2 = copy.deepcopy(current_floor)
-                # child2[move_south] = 1
-                # # new_pos_2 = move_south
-                # children.append([(move_south), child2.tolist()])
+            if (move_south not in array_blocked_tiles and move_south not in array_visited_tiles
+            ):
                 child2 = self.child_gen(2, current_floor, move_south)
                 children.append(child2)
-            else:
-                child2 = None
             
-            return children
+            # return children
 
         elif row == max_row and col == 0: # Bottom left corner
             if (move_north not in array_blocked_tiles 
                 and move_north not in array_visited_tiles
             ):
-                # child0 = copy.deepcopy(current_floor)
-                # child0[move_north] = 1
-                # # new_pos_0 = move_north
-                # children.append([(move_north), child0.tolist()])
                 child0 = self.child_gen(0, current_floor, move_north)
                 children.append(child0)
-            else:
-                child0 = None
 
             if (move_east not in array_blocked_tiles 
                 and move_east not in array_visited_tiles
             ):
-                # child1 = copy.deepcopy(current_floor)
-                # child1[move_east] = 1
-                # # new_pos_1 = move_east
-                # children.append([(move_east), child1.tolist()])
                 child1 = self.child_gen(1, current_floor, move_east)
                 children.append(child1)
-            else:
-                child1 = None
             
-            return children
-        else:
+        if not children: # get un-stuck
             choice = random.choice([0, 1, 2, 3])
-                
-            if choice == 0:
-                # child0 = copy.deepcopy(current_floor)
-                # child0[move_north] = 1
-                # # new_pos_0 = move_north
-                # children.append([(move_north), child0.tolist()])
-                child0 = self.child_gen(0, current_floor, move_north)
-                children.append(child0)
-            elif choice == 1:
-                # child1 = copy.deepcopy(current_floor)
-                # child1[move_east] = 1
-                # # new_pos_1 = move_east
-                # children.append([(move_east), child1.tolist()])
-                child1 = self.child_gen(1, current_floor, move_east)
-                children.append(child1)
-            elif choice == 2:
-                # child2 = copy.deepcopy(current_floor)
-                # child2[move_south] = 1
-                # # new_pos_2 = move_south
-                # children.append([(move_south), child2.tolist()])
-                child2 = self.child_gen(2, current_floor, move_south)
-                children.append(child2)
-            elif choice == 3:
-                # child3 = copy.deepcopy(current_floor)
-                # child3[move_west] = 1
-                # # new_pos_3 = move_west
-                # children.append([(move_west), child3.tolist()])
-                child3 = self.child_gen(3, current_floor, move_west)
-                children.append(child3)
 
-            return children
+            try:    
+                if choice == 0 and move_north not in array_blocked_tiles:
+                    child0 = self.child_gen(0, current_floor, move_north)
+                    children.append(child0)
+            except:
+                next
+            try:
+                if choice == 1 and move_east not in array_blocked_tiles:
+                    child1 = self.child_gen(1, current_floor, move_east)
+                    children.append(child1)
+            except:
+                next
+            try:
+                if choice == 2 and move_south not in array_blocked_tiles:
+                    child2 = self.child_gen(2, current_floor, move_south)
+                    children.append(child2)
+            except:
+                next
+            try:
+                if choice == 3 and move_west not in array_blocked_tiles:
+                    child3 = self.child_gen(3, current_floor, move_west)
+                    children.append(child3)
+            except:
+                exit
+
+        # if not children: # Debug
+        #     print("check children") # Debug
+        return children
         
 
     def child_gen(self, move, current_floor, new_pos):
-        
+        global visited_set
+
         if move == 0:
             child0 = copy.deepcopy(current_floor)
             child0[new_pos] = 1
-
             return [move, (new_pos), child0.tolist()]
         
         elif move == 1:
             child1 = copy.deepcopy(current_floor)
             child1[new_pos] = 1
-
             return [move, (new_pos), child1.tolist()]
         
         elif move == 2:
             child2 = copy.deepcopy(current_floor)
             child2[new_pos] = 1
-
             return [move, (new_pos), child2.tolist()]
         
         elif move == 3:
             child3 = copy.deepcopy(current_floor)
             child3[new_pos] = 1
-
             return [move, (new_pos), child3.tolist()]
