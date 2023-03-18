@@ -76,16 +76,19 @@ class RoboVac:
 
         while queue:
             path = queue.pop(0)
+            # Clear the set so only traversed tiles are saved            
+            visited_set.clear() 
             for items in path:
                 visited_set.add((items[1])) # In array format (row, col)
             vertex = path[-1][2]
             cur_pos = path[-1][1] 
             child_list = self.get_child_floor_list(cur_pos, vertex)
 
-            next_node_list = [x for x in child_list if x[2] not in path]
+            next_node_list = ([x for x in child_list 
+                               if x[2] not in path])
 
             for next in next_node_list:
-                if np.sum(next[2]) == goal_board or len(path) == 100:
+                if np.sum(next[2]) == goal_board or len(path) == 50:
                     for x in path:
                         final_path.append(x[0])
                     return final_path
@@ -101,8 +104,6 @@ class RoboVac:
 
         for b_tiles in self.blocked_tiles_set:
             array_blocked_tiles.add(b_tiles[::-1])
-
-        # visited_set = visited_set
 
         children = []
 
@@ -153,7 +154,8 @@ class RoboVac:
                 children.append(child3)
 
             if not children: # Get un-stuck
-                options = [x for x in moves if x not in array_blocked_tiles]
+                options = ([x for x in moves 
+                            if x not in array_blocked_tiles])
                 choice = random.choice(options)
 
                 if choice == move_north:
@@ -189,7 +191,8 @@ class RoboVac:
                 children.append(child3)
 
             if not children: # Get un-stuck
-                options = [x for x in moves if x not in array_blocked_tiles]
+                options = ([x for x in moves 
+                            if x not in array_blocked_tiles])
                 choice = random.choice(options)
 
                 if choice == move_east:
