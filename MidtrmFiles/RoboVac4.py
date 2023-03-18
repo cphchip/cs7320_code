@@ -59,7 +59,7 @@ class RoboVac:
         global move_list
 
         if call_count == 0:
-            move_list = self.next_step_bfs(vac_pos) # Change to alter search
+            move_list = self.next_step_dfs(vac_pos) # Change to alter search
         call_count += 1
         
         return move_list[call_count]
@@ -76,7 +76,7 @@ class RoboVac:
 
         while queue:
             path = queue.pop(0)
-            # Clear the set so only traversed tiles are saved            
+            # Clear visited set so only traversed tiles are saved            
             visited_set.clear() 
             for items in path:
                 visited_set.add((items[1])) # In array format (row, col)
@@ -88,12 +88,41 @@ class RoboVac:
                                if x[2] not in path])
 
             for next in next_node_list:
-                if np.sum(next[2]) == goal_board or len(path) == 50:
+                if np.sum(next[2]) == goal_board or len(path) == 400:
                     for x in path:
                         final_path.append(x[0])
                     return final_path
                 else:
                     queue.append(path + [next])
+    
+    '''Copied from 8 game DFS'''
+    def next_step_dfs(self, vac_pos):
+        global visited_set
+        arr_pos = vac_pos[::-1]
+        stack = [[(None, arr_pos, floor)]]
+        goal_board = len(self.free_tiles_set)
+        final_path = []
+
+        while stack:
+            path = stack.pop()
+            # Clear visited set so only traversed tiles are saved            
+            visited_set.clear() 
+            for items in path:
+                visited_set.add((items[1])) # In array format (row, col)
+            vertex = path[-1][2]
+            cur_pos = path[-1][1] 
+            child_list = self.get_child_floor_list(cur_pos, vertex)
+
+            next_node_list = ([x for x in child_list 
+                               if x[2] not in path])
+
+            for next in next_node_list:
+                if np.sum(next[2]) == goal_board or len(path) == 400:
+                    for x in path:
+                        final_path.append(x[0])
+                    return final_path
+                else:
+                    stack.append(path + [next])
     
     def get_child_floor_list(self, arr_pos, current_floor):
 
