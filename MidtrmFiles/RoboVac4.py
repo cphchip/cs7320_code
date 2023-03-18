@@ -59,13 +59,13 @@ class RoboVac:
         global move_list
 
         if call_count == 0:
-            move_list = self.next_step(vac_pos)
+            move_list = self.next_step_bfs(vac_pos) # Change to alter search
         call_count += 1
         
         return move_list[call_count]
 
 
-    def next_step(self, vac_pos):
+    def next_step_bfs(self, vac_pos):
 
         '''Copied from 8-game - BFS'''
         global visited_set
@@ -85,7 +85,7 @@ class RoboVac:
             next_node_list = [x for x in child_list if x[2] not in path]
 
             for next in next_node_list:
-                if np.sum(next[2]) == goal_board or len(path) == 400:
+                if np.sum(next[2]) == goal_board or len(path) == 100:
                     for x in path:
                         final_path.append(x[0])
                     return final_path
@@ -97,7 +97,6 @@ class RoboVac:
         max_row, max_col = self.room_height - 1, self.room_width - 1
         current_floor = np.array(current_floor)
         array_blocked_tiles = set()
-        # array_visited_tiles = set()
         moves = []
 
         for b_tiles in self.blocked_tiles_set:
@@ -125,7 +124,7 @@ class RoboVac:
             move_south = (row + 1, col)
             moves.append((move_south))
 
-        # Consider board conditions for possible moves
+        # Consider board conditions for possible moves, 9 total
         if (row > 0 and row < max_row
             and col > 0 and col < max_col
         ):  # Center condition
@@ -169,31 +168,7 @@ class RoboVac:
                 elif choice == move_west:
                     child3 = self.child_gen(3, current_floor, move_west)
                     children.append(child3)
-        
-        elif row == 0 and col == 0:  # Upper left corner 
-            if (move_east not in array_blocked_tiles 
-                and move_east not in visited_set
-            ):
-                child1 = self.child_gen(1, current_floor, move_east)
-                children.append(child1)
-            
-            if (move_south not in array_blocked_tiles 
-                and move_south not in visited_set
-            ):
-                child2 = self.child_gen(2, current_floor, move_south)
-                children.append(child2)
-
-            if not children: # Get un-stuck
-                options = [x for x in moves if x not in array_blocked_tiles]
-                choice = random.choice(options)
-
-                if choice == move_east:
-                    child1 = self.child_gen(1, current_floor, move_east)
-                    children.append(child1)
-                elif choice == move_south:
-                    child2 = self.child_gen(2, current_floor, move_south)
-                    children.append(child2)
-                    
+                            
         elif row == 0 and col > 0 and col < max_col:  # Top edge 
             if (move_east not in array_blocked_tiles 
                 and move_east not in visited_set
@@ -421,9 +396,6 @@ class RoboVac:
                 elif choice == move_east:
                     child1 = self.child_gen(1, current_floor, move_east)
                     children.append(child1)
-
-        if not children: # Debug
-            print("check children") # Debug
 
         return children
         
