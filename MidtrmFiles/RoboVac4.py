@@ -81,20 +81,27 @@ class RoboVac:
         final_path = []
 
         while queue:
+
             # Pull first path from queue
             path = queue.pop(0)
+
             # Rebuild visited set for newest path            
             visited_set.clear() 
             for items in path:
                 visited_set.add((items[1]))
+
             vertex = path[-1][2] # Get floor from tuple
             cur_pos = path[-1][1] # Get position from tuple
+
             # Returns [move, location, new floor] for each child
             child_list = self.get_child_floor_list(cur_pos, vertex)
             next_node_list = ([x for x in child_list 
                                if x[2] not in path])
+            
             for next in next_node_list:
-                # Visited floor spaces are value 1, compare sum with free tiles qty to check solution
+
+                # Visited floor spaces are value 1 
+                # Compare sum with free tiles qty to check solution
                 # Cutoff set to 17 due to bfs memory/time consumption
                 if np.sum(next[2]) == goal_board or len(path) == 17:
                     for x in path:
@@ -117,21 +124,27 @@ class RoboVac:
         final_path = []
 
         while stack:
+
             # Pull last path added to stack
             path = stack.pop()
+
             # Rebuild visited set for newest path            
             visited_set.clear() 
             for items in path:
                 visited_set.add((items[1]))
+
             vertex = path[-1][2] # Get floor from tuple
             cur_pos = path[-1][1] # Get position from tuple
+            
             # Returns [move, location, new floor] for each child
             child_list = self.get_child_floor_list(cur_pos, vertex)
             next_node_list = ([x for x in child_list 
                                if x[2] not in path])
 
             for next in next_node_list:
-                # Visited floor spaces are value 1, compare sum with free tiles qty to check solution, or cutoff at 400
+                # Visited floor spaces are value 1 
+                # Compare sum with free tiles qty to check solution,
+                # or cutoff at 400
                 if np.sum(next[2]) == goal_board or len(path) == 400:
                     for x in path:
                         final_path.append(x[0])

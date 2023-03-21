@@ -49,7 +49,7 @@ class RoboVac:
         floor = np.zeros((self.room_height,self.room_width),dtype=int)
         floor[self.pos[1], self.pos[0]] = 1
         for b_tile in self.blocked_tiles_set:
-            # Can't explain, but half the boards wouldn't load without this. No other levels had this problem.
+            # Can't explain, but half the boards wouldn't load without decreasing the x value by 2. No other levels had this problem.
             if b_tile[0] > 11:
                 floor[b_tile[1], b_tile[0] - 2] = -1
             else:
@@ -157,14 +157,16 @@ class RoboVac:
     
     def next_step_bfs_pq(self, vac_pos):
         '''Copied from 8-game and modified - PriorityQueue'''
+        ''' The intent of this function was to try and apply a priority to boards children with fewer dirty cells as a heuristic. I never quite got it working correctly.'''
+
         global visited_set
         queue = PriorityQueue()
 
         # Convert position to array format (row, col) from (x, y)
         arr_pos = vac_pos[::-1]
 
-        # Assume nearest free tile is distance 1 to start
-        queue.put([1,[(None, arr_pos, floor)]]) 
+        # Nearest free tile is distance 1 to start
+        queue.put([np.sum(floor),[(None, arr_pos, floor)]]) 
 
         # Free cell qty used to determine if goal board is reached
         goal_board = len(self.free_tiles_set)
@@ -173,7 +175,7 @@ class RoboVac:
         while not queue.empty():
             
             # Pull first path from queue
-            euc_dist, path = queue.get()
+            floor_sum, path = queue.get()
 
             # Rebuild visited set for newest path            
             visited_set.clear() 
@@ -187,6 +189,7 @@ class RoboVac:
 
             vertex = path[-1][2] # Get floor from tuple
             cur_pos = path[-1][1] # Get position from tuple
+
             # Returns [move, location, new floor] for each child
             child_list = self.get_child_floor_list(cur_pos, vertex)
             next_node_list = ([x for x in child_list 
@@ -195,24 +198,23 @@ class RoboVac:
             for next in next_node_list:
 
                 # Calculate euclidean distance for free tiles
-                euc_dist = 0
-
-                for tile in self.free_tiles_set:
-                    euc_dist = (euc_dist + math.dist(cur_pos, tile))
-
-
-
-
+                # distances = PriorityQueue()
+                # for tile in self.free_tiles_set:
+                #     euc_dist = 0
+                #     euc_dist = (euc_dist + math.dist(cur_pos, tile))
+                #     distances.put((euc_dist, tile))
+                
+                # print(distances.get()[1]) # Debug line
                 # Visited floor spaces are value 1, compare sum with free tiles qty to check solution
                 # Cutoff set to 17 due to bfs memory/time consumption
-                if np.sum(next[2]) == goal_board or len(path) == 17:
+                if np.sum(next[2]) == goal_board or len(path) == 400:
                     for x in path:
                         final_path.append(x[0])
                     return final_path
                 else:
-                    total_distance = next_euc_distance + euc_dist
-                    queue.append(total_distance, path + [next])
-    
+                    queue.put([np.sum(next[2]), path + [next]])
+            # queue.put([np.sum(floor),[(None, arr_pos, floor)]]) 
+
 
     def get_child_floor_list(self, arr_pos, current_floor):
 
