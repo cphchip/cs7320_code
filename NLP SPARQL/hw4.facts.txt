@@ -1,0 +1,37 @@
+The belief is that John loves Margaret.
+John talks to Bob.
+John hangs out with Ralph.
+John works at Xerox.
+John lives in Houston.
+William is employed at Xerox.
+William knows Margaret.
+William knows John.
+Bob works at Xerox.
+NASA is an organization.
+Bob lives in Houston.
+Houston is a city.
+Mary has $500.
+Bob works with John.
+Mary lives in Paris.
+Alexander likes Dave.
+Alexander knows Mary.
+Alexander lives in Houston.
+Alexander likes Nelson.
+Dave lives in Dallas.
+Dave knows John. 
+Dave plays the tuba.
+Ralph likes Thomas.
+Ralph likes William.
+Ralph works with Alexander.
+Roger likes Mary.
+Ralph eats toast.
+Jane lives in Texas.
+Jane eats toast.
+Mary has friend Alex.
+Alexander knows Dave.
+Ralph is employed at Xerox.
+Alexander lives in Texas.
+Jane lives in Houston.
+Roger knows Alexander.
+Dave likes John's computer.
+
