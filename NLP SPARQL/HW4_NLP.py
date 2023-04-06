@@ -6,27 +6,32 @@ from nltk.corpus import stopwords
 
 test_sent = "The news says Ralph lives in Dallas in a house."
 
-def get_entity_list_from_sentence(sentence):
+def create_triples(sentence):
 
+           
    tagged_sent = pos_tag(word_tokenize(sentence))
    tree = nltk.ne_chunk(tagged_sent)
 
-   # number_items in the tree = number words in the sentence
+   # Number_items in the tree = number words in the sentence
    number_items = len(sentence.split())
    
-   # each tree item is available using an index 0..number_items
+   # Each tree item is available using an index 0..number_items
    idx_list = []
    phrase = ""
    for idx in range(number_items):
       if (type(tree[idx]) == nltk.Tree 
-          and tree[idx].label() == 'PERSON'
+         and tree[idx].label() == 'PERSON'
       ):
-            idx_list.append(idx)
+         idx_list.append(idx)
 
-      # find second tree type - end of string index
+      # Find second tree type - end of string index
+      # This may need to be changed to not just find nltk.tree types
       elif (type(tree[idx]) == nltk.Tree and idx_list):
-          idx_list.append(idx)
-   
+         idx_list.append(idx)
+
+   if not idx_list or len(idx_list) < 2:
+      return ''
+
    entities, relationships = [], []
    
    for idx in range(idx_list[0], idx_list[1] + 1):
@@ -37,21 +42,18 @@ def get_entity_list_from_sentence(sentence):
       else:
           phrase += tree[idx][0] + " "
           relationships.append(tree[idx][0])
-
-   # With something like below, may not need create_triples
-   # print(entities[0], relationships, entities[len(entities)-1]) # Debug
-   
-   return phrase
-
-def create_triples(phrase):
     
    foaf_dict = {'lives in': 'foaf:based_near',
                'works at': 'schema:worksFor',
+               'is employed at': 'schema:worksFor',
                'knows': 'foaf:knows',
                'works with': 'foaf:knows',
                'has friend': 'foaf:knows',
                'hangs out with': 'foaf:knows',
-               'likes': 'foaf:knows'}
+               'likes': 'foaf:knows',
+               'loves': 'foaf:knows',
+               'talks to': 'foaf:knows',
+               'is employed at': 'schema:worksFor'}
    
    relationship = ''
    word_tokens = word_tokenize(phrase)
@@ -86,6 +88,8 @@ def create_triples(phrase):
 
    return
 
-# Change this to read from file
-create_triples(get_entity_list_from_sentence(test_sent))
+with open('hw4.facts.txt') as facts:
+      for line in facts:
+         create_triples(line)
+
 
