@@ -27,33 +27,49 @@ def get_entity_list_from_sentence(sentence):
       elif (type(tree[idx]) == nltk.Tree and idx_list):
           idx_list.append(idx)
    
+   entities, relationships = [], []
+   
    for idx in range(idx_list[0], idx_list[1] + 1):
 
       if type(tree[idx]) == nltk.Tree:
          phrase += tree[idx][0][0] + " "
+         entities.append(tree[idx][0][0])
       else:
           phrase += tree[idx][0] + " "
+          relationships.append(tree[idx][0])
 
+   # With something like below, may not need create_triples
+   # print(entities[0], relationships, entities[len(entities)-1]) # Debug
+   
    return phrase
 
 def create_triples(phrase):
     
-   foaf_dict = {'lives': 'foaf:based_near',
+   foaf_dict = {'lives in': 'foaf:based_near',
                'works at': 'schema:worksFor',
                'knows': 'foaf:knows',
                'works with': 'foaf:knows',
                'has friend': 'foaf:knows',
                'hangs out with': 'foaf:knows',
                'likes': 'foaf:knows'}
-
+   
+   relationship = ''
+   word_tokens = word_tokenize(phrase)
+   for x in range(1, len(word_tokens) - 1):
+       relationship += word_tokens[x] + ' '
+       
+   ''' This part may not be needed for now
    word_tokens = word_tokenize(phrase)
    stop_words = set(stopwords.words('english'))
 
    filtered_phrase = [word for word in word_tokens 
                       if word not in stop_words]
+   '''
    
-   # Need to capture words between Entities in string to compare with foaf_dict 
-
+   filtered_phrase = [word_tokens[0], 
+                      relationship.strip(), 
+                      word_tokens[len(word_tokens) - 1]]
+                     
    triple = ''
    for word in filtered_phrase:
       if word in foaf_dict:
