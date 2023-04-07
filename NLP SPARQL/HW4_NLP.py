@@ -4,10 +4,7 @@ from nltk import pos_tag
 from nltk.corpus import stopwords
 
 
-test_sent = "The news says Ralph lives in Dallas in a house."
-
 def create_triples(sentence):
-
            
    tagged_sent = pos_tag(word_tokenize(sentence))
    tree = nltk.ne_chunk(tagged_sent)
@@ -15,33 +12,34 @@ def create_triples(sentence):
    # Number_items in the tree = number words in the sentence
    number_items = len(sentence.split())
    
-   # Each tree item is available using an index 0..number_items
    idx_list = []
-   phrase = ""
    for idx in range(number_items):
+      # Find index of first entity that's a person
       if (type(tree[idx]) == nltk.Tree 
          and tree[idx].label() == 'PERSON'
       ):
          idx_list.append(idx)
 
       # Find second tree type - end of string index
-      # This may need to be changed to not just find nltk.tree types
       elif (type(tree[idx]) == nltk.Tree and idx_list):
          idx_list.append(idx)
 
+   # Remove unwanted phrases by returning empty line
    if not idx_list or len(idx_list) < 2:
       return ''
 
-   entities, relationships = [], []
-   
+   entities = []
+   # Use identified indices to capture the phrase
+   phrase = ''
+   relationship = ''
    for idx in range(idx_list[0], idx_list[1] + 1):
 
       if type(tree[idx]) == nltk.Tree:
          phrase += tree[idx][0][0] + " "
          entities.append(tree[idx][0][0])
       else:
-          phrase += tree[idx][0] + " "
-          relationships.append(tree[idx][0])
+         phrase += tree[idx][0] + ' '
+         relationship += tree[idx][0] + ' '
     
    foaf_dict = {'lives in': 'foaf:based_near',
                'works at': 'schema:worksFor',
@@ -54,42 +52,35 @@ def create_triples(sentence):
                'loves': 'foaf:knows',
                'talks to': 'foaf:knows',
                'is employed at': 'schema:worksFor'}
-   
-   relationship = ''
-   word_tokens = word_tokenize(phrase)
-   for x in range(1, len(word_tokens) - 1):
-       relationship += word_tokens[x] + ' '
-       
-   ''' This part may not be needed for now
-   word_tokens = word_tokenize(phrase)
-   stop_words = set(stopwords.words('english'))
 
-   filtered_phrase = [word for word in word_tokens 
-                      if word not in stop_words]
-   '''
-   
-   filtered_phrase = [word_tokens[0], 
-                      relationship.strip(), 
-                      word_tokens[len(word_tokens) - 1]]
-                     
+   # Replace the relationship with foaf definition
+   relationship = relationship.strip()
+   if relationship in foaf_dict:
+      relationship = foaf_dict[relationship]
+          
    triple = ''
-   for word in filtered_phrase:
-      if word in foaf_dict:
-         word = foaf_dict[word]
-      # This is a cludge but it works
-      elif type(nltk.ne_chunk(pos_tag([word]))) == nltk.Tree:
-          word = ':' + word
+   triple = (':' 
+             + entities[0] 
+             + ' '  
+             + relationship 
+             + ' :' 
+             + entities[1])
+   
+   return triple
 
-      triple += word + " "
+def main():
+   triple_list = []
+   # Read sentences from file
+   with open('hw4.facts.txt') as facts:
+         for line in facts:
+            triple_list.append(create_triples(line))
 
-   print(triple)
+   # Write completd triples to n3 file if they aren't blank
+   with open('test.n3', 'w') as n3:
+      for triple in triple_list:
+         if triple != '':
+            n3.write(triple + '\n')
+         else:
+            next
 
-   # Change this to write to file
-
-   return
-
-with open('hw4.facts.txt') as facts:
-      for line in facts:
-         create_triples(line)
-
-
+main()
