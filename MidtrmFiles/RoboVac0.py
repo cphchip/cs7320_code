@@ -29,33 +29,30 @@ class RoboVac:
         # Return a direction for the vacuum to move
         # random walk 0=north # 1=east 2=south 3=west
 
+        # Keep track of visited tiles to improve performance
         global visited_list
         visited_list.append(current_pos)
         max_x, max_y = self.room_width, self.room_height
 
         # Check surrounding cells and move appropriate direction
-        if (
-            current_pos[0] - 1,
-            current_pos[1],
-        ) not in visited_list and current_pos[0] != 0:
+        if ((current_pos[0] - 1, current_pos[1]) 
+            not in visited_list and current_pos[0] != 0
+        ):
             return 3
 
-        elif (
-            current_pos[0],
-            current_pos[1] - 1,
-        ) not in visited_list and current_pos[1] != 0:
+        elif ((current_pos[0], current_pos[1] - 1)
+              not in visited_list and current_pos[1] != 0
+        ):
             return 0
 
-        elif (
-            current_pos[0] + 1,
-            current_pos[1],
-        ) not in visited_list and current_pos[0] != max_x - 1:
+        elif ((current_pos[0] + 1, current_pos[1]) 
+              not in visited_list and current_pos[0] != max_x - 1
+        ):
             return 1
 
-        elif (
-            current_pos[0],
-            current_pos[1] + 1,
-        ) not in visited_list and current_pos[1] != max_y - 1:
+        elif ((current_pos[0], current_pos[1] + 1)
+              not in visited_list and current_pos[1] != max_y - 1
+        ):
             return 2
-        else:
+        else: # If stuck, perform random move
             return random.choice([0, 1, 2, 3])

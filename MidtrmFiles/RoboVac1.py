@@ -51,12 +51,15 @@ class RoboVac:
 
 
     def get_next_move(self, vac_pos):  # called by PyGame code
-        # Return a direction for the vacuum to move
+
         max_x, max_y = self.room_width, self.room_height
+
+        # Improve readability by assigning variables for position
         vac_x, vac_y = vac_pos[0], vac_pos[1]
+
+        # Keep track of visited tiles to improve performance
         global visited_set
         visited_set.add((vac_x, vac_y))
-        # global blocked_tile_set
 
         # Check surrounding cells and move appropriate direction
         if ((vac_x - 1, vac_y) not in visited_set
@@ -75,84 +78,5 @@ class RoboVac:
             and vac_y != max_y - 1
         ):
             return 2
-        else:  # if we get stuck
+        else:  # if we get stuck, perform random move
             return random.choice([0, 1, 2, 3])
-
-    def get_child_floor_list(self, current_pos):
-
-        """Uses code modified from 8-game homework"""
-        # Get x,y of surrounding blocks of current pos
-        x, y = current_pos
-        try:
-            move_left = (x - 1, y)
-        except IndexError:
-            move_left = None
-        try:
-            move_right = (x + 1, y)
-        except IndexError:
-            move_right = None
-        try:
-            move_down = (x, y + 1)
-        except IndentationError:
-            move_down = None
-        try:
-            move_up = (x, y - 1)
-        except IndexError:
-            move_up = None
-
-        # Consider board conditions for possible moves
-        if x > 0 and y > 0:  # Center condition
-            # child0 = North move
-            # child1 = East move
-            # child2 = South move
-            # child3 = West move
-            return
-
-        if x == 0 and y == 0:  # Upper left hand corner condition
-            # child1 = East move
-            # child2 = South move
-            return
-
-        if x > 0 and y == 0:  # Top edge condition
-            # child1 = East move
-            # child2 = South move
-            # child3 = West move
-            return
-
-        if x == 0 and y >= 1 and y <= max_y:  # Left edge condition
-            # child0 = North move
-            # child1 = East move
-            # child2 = South move
-            return
-
-        if x >= 1 and x <= max_x and y == 0:  # Bottom edge condition
-            # child0 = North move
-            # child1 = East move
-            # child3 = West move
-            return
-
-        if x == max_x and y >= 1 and y <= max_y:  # Right edge condition
-            # child0 = North move
-            # child2 = South move
-            # child3 = West move
-            return
-
-        if x == max_x and y == max_y:  # Bottom right corner condition
-            # child0 = North move
-            # child3 = West move
-            return
-
-        if x == max_x and y == 0:  # Top right corenr condition
-            # child2 = South move
-            # child3 = West move
-            return
-
-        if x == 0 and y == 0:  # Top left corner condition
-            # child1 = East move
-            # child2 = South move
-            return
-
-        if x == 0 and y == max_y:  # Bottom left corner condition
-            # child0 = North move
-            # child1 = East move
-            return

@@ -1,0 +1,5 @@
+@prefix schema: 	<http://schema.org> .
+@prefix : 		<http://www.codesupreme.com/#> . 
+@prefix foaf: 	<http://xmlns.com/foaf/0.1/> . 
+
+[rule1: (?u schema:worksFor :Xerox ) -> (?u foaf:based_near :Houston)] 

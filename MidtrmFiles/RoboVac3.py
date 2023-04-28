@@ -42,12 +42,11 @@ class RoboVac:
 
 
         # Structure copied from HW2, content updated
+        # Began toying with creating a node map, not fully used here
         # create map - node -> [child, child]
         self.node_map = {}
         for i in self.free_tiles_set:
             self.node_map.setdefault(i[0],[]).append(i[1])
-        
-        
         
         global visited_set
         # Treat blocked as visited for simplicity
@@ -59,9 +58,13 @@ class RoboVac:
 
 
     def get_next_move(self, vac_pos):  # called by PyGame code
-        # Return a direction for the vacuum to move
+
         max_x, max_y = self.room_width, self.room_height
+
+        # Improve readability by assigning variables for position
         vac_x, vac_y = vac_pos[0], vac_pos[1]
+
+        # Keep track of visited tiles to improve performance
         global visited_set
         visited_set.add((vac_x, vac_y))
 
@@ -82,5 +85,5 @@ class RoboVac:
             and vac_y != max_y - 1
         ):
             return 2
-        else:  # if we get stuck
+        else:  # if we get stuck move to random position
             return random.choice([0, 1, 2, 3])
