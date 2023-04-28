@@ -63,15 +63,17 @@ def nnet(raw_data):
     seed = 7
     np.random.seed(seed)
     dataset = raw_data
-    X = dataset[:, 0:8]
+    X = dataset[:, 0:7]
     Y = dataset[:, 7]
     
     model = Sequential()
-    model.add(Dense(16, input_dim=8, activation='relu'))
+    model.add(Dense(16, input_dim=7, activation='relu'))
     model.add(Dense(1, activation='sigmoid'))
 
     X_train, X_test, Y_train, Y_test = train_test_split(X, 
-                                                        Y, test_size=0.33, random_state=
+                                                        Y, 
+                                                        test_size=0.33, 
+                                                        random_state=
                                                             seed
                                                         )
 
