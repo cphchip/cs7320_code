@@ -11,6 +11,7 @@ exec will : create instance and in game loop call : nextMove()  ??
 import random
 import numpy as np
 import copy
+import datetime
 
 # Global variable declarations
 visited_set = set()
@@ -59,7 +60,7 @@ class RoboVac:
         global move_list
 
         if call_count == 0:
-            move_list = self.next_step_dfs(vac_pos) # Change to alter search
+            move_list = self.next_step_bfs(vac_pos) # Change to alter search
         call_count += 1
         
         return move_list[call_count]
@@ -68,6 +69,7 @@ class RoboVac:
     def next_step_bfs(self, vac_pos):
 
         '''Copied from 8-game - BFS'''
+        print(datetime.datetime.now())
         global visited_set
         arr_pos = vac_pos[::-1]
         queue = [[(None, arr_pos, floor)]]
@@ -88,7 +90,8 @@ class RoboVac:
                                if x[2] not in path])
 
             for next in next_node_list:
-                if np.sum(next[2]) == goal_board or len(path) == 400:
+                if np.sum(next[2]) == goal_board or len(path) == 25:
+                    print(datetime.datetime.now())
                     for x in path:
                         final_path.append(x[0])
                     return final_path
