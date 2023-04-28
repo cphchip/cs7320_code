@@ -64,7 +64,8 @@ def create_triples(sentence):
              + ' '  
              + relationship 
              + ' :' 
-             + entities[1])
+             + entities[1]
+             + ' .')
    
    return triple
 
@@ -77,6 +78,9 @@ def main():
 
    # Write completd triples to n3 file if they aren't blank
    with open('test.n3', 'w') as n3:
+      n3.write('@prefix : <http://www.codesupreme.com/#> .\n')
+      n3.write('@prefix schema: <http://schema.org> .\n')
+      n3.write('@prefix foaf: <http://xmlns.com/foaf/0.1/> .\n\n')
       for triple in triple_list:
          if triple != '':
             n3.write(triple + '\n')

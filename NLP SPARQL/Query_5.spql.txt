@@ -1,0 +1,6 @@
+PREFIX	 : 		<http://www.codesupreme.com/#> 
+PREFIX	schema: 	<http://schema.org>
+PREFIX 	foaf: 	<http://xmlns.com/foaf/0.1/>
+
+SELECT 	?u 
+WHERE { 	?u foaf:based_near :Houston .}
