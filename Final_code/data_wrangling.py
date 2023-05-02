@@ -68,6 +68,7 @@ def nnet(raw_data):
     
     model = Sequential()
     model.add(Dense(16, input_dim=7, activation='relu'))
+    # model.add(Dense(16, input_dim=7, activation='relu')) # add layer
     model.add(Dense(1, activation='sigmoid'))
 
     X_train, X_test, Y_train, Y_test = train_test_split(X, 
