@@ -2,6 +2,8 @@ import pandas as pd
 from keras.models import Sequential
 from keras.layers import Dense
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import StandardScaler
 import numpy as np
 
 
@@ -55,8 +57,35 @@ def clean_data(file):
         ValueError: Failed to convert a NumPy array to a Tensor (Unsupported object type float)
     '''
     raw_data = np.asarray(raw_data).astype(np.float32)
+    # print(raw_data, "\n\n")
+
+    # Pick one of these standardization techniques
+    raw_data = data_normalize(raw_data)
+    # raw_data = data_standardize(raw_data)
+
+    # print(raw_data)
     
     return raw_data
+
+
+def data_normalize(raw_data):
+
+    norm = MinMaxScaler().fit(raw_data)
+    raw_data_norm = norm.transform(raw_data)
+    
+    return raw_data_norm
+
+
+def data_standardize(raw_data):
+
+    raw_data_stand = raw_data.copy()
+    num_columns = ['f1', 'f2', 'f3', 'f4', 'f5']
+
+    for i in num_columns:
+        scale = StandardScaler().fit(raw_data_stand[[i]])
+        raw_data_stand[i] = scale.transform(raw_data_stand[[i]])
+
+    return raw_data_stand
 
 
 def nnet(raw_data):
