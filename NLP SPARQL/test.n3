@@ -1,4 +1,4 @@
-@prefix : <http://www.codesupreme.com/#> . 
+@prefix : <http://www.codesupreme.com/#> .
 @prefix schema: <http://schema.org> .
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 
